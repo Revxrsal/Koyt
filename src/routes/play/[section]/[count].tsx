@@ -3,6 +3,7 @@ import {CourseEntries, Episode} from "~/Course";
 import Video from "~/components/video/Video";
 import {createMemo, JSXElement, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
+import {commands} from "~/gen/bindings";
 
 export interface PathProps extends Params {
   section: string;

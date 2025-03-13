@@ -1,17 +1,17 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "oxide",
+  "productName": "Oxide",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "net.kasasbeh.oxider",
   "build": {
-    "frontendDist": "../.output",
+    "frontendDist": "../.output/public",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build"
   },
   "app": {
     "security": {
-      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost",
+      "csp": "default-src 'self'; connect-src *; media-src *; img-src * data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
       "assetProtocol": {
         "enable": true,
         "scope": [

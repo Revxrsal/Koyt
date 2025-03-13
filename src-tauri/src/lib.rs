@@ -1,27 +1,22 @@
+mod commands;
+mod extensions;
 mod window;
 
-use specta_typescript::Typescript;
+use crate::window::open_main_window;
 use tauri::Manager;
 use tauri_specta::{collect_commands, ErrorHandlingMode};
-use crate::window::open_main_window;
-
-#[tauri::command]
-#[specta::specta]
-async fn hello_world(my_name: String) -> Result<String, ()> {
-    Ok(format!("Hello, {my_name}! You've been greeted from Rust!"))
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri_specta::Builder::<tauri::Wry>::new()
         // Then register them (separated by a comma)
-        .commands(collect_commands![hello_world])
+        .commands(collect_commands![commands::add_browser_extension])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
     builder
         .export(
-            Typescript::default().header("// @ts-ignore"),
+            specta_typescript::Typescript::default().header("// @ts-ignore"),
             "../src/gen/bindings.ts",
         )
         .expect("Failed to export typescript bindings");

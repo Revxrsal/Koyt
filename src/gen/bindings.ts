@@ -5,8 +5,8 @@
 
 
 export const commands = {
-async helloWorld(myName: string) : Promise<string> {
-    return await TAURI_INVOKE("hello_world", { myName });
+async addBrowserExtension(extensionFolder: string) : Promise<null> {
+    return await TAURI_INVOKE("add_browser_extension", { extensionFolder });
 }
 }
 
