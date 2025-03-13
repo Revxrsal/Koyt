@@ -1,5 +1,9 @@
+mod window;
+
 use specta_typescript::Typescript;
+use tauri::Manager;
 use tauri_specta::{collect_commands, ErrorHandlingMode};
+use crate::window::open_main_window;
 
 #[tauri::command]
 #[specta::specta]
@@ -36,6 +40,7 @@ pub fn run() {
                 )?;
             }
             builder.mount_events(app);
+            open_main_window(app.app_handle());
             Ok(())
         })
         .run(tauri::generate_context!())
