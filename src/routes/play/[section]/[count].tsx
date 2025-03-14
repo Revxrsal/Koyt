@@ -1,4 +1,4 @@
-import {Params, useLocation, useNavigate, useParams} from "@solidjs/router";
+import {Params, useNavigate, useParams} from "@solidjs/router";
 import {CourseEntries, Episode} from "~/Course";
 import Video from "~/components/video/Video";
 import {createMemo, JSXElement, onMount, Show} from "solid-js";
@@ -25,7 +25,7 @@ export default function Play() {
   }
 
   onMount(() => {
-    localStorage.setItem("oxide_last_loc", `/${section()}/${count()}`);
+    localStorage.setItem("oxide_last_loc", `/play/${section()}/${count()}`);
   });
   return <div class={"min-h-screen flex flex-col justify-center items-center"}>
     <Button
@@ -158,8 +158,4 @@ function Kbd(props: { children: JSXElement }) {
       {props.children}
     </kbd>
   )
-}
-
-function Cmd() {
-  return <span class="text-xs">⌘</span>
 }
