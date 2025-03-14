@@ -4,6 +4,7 @@ import Video from "~/components/video/Video";
 import {createMemo, JSXElement, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
 import {commands} from "~/gen/bindings";
+import {path} from "@tauri-apps/api";
 
 export interface PathProps extends Params {
   section: string;
@@ -23,74 +24,93 @@ export default function Play() {
     window.location.replace(episodeUrl(ep));
   }
 
-  return (
-    <div class={"min-h-screen flex flex-col justify-center items-center"}>
-      <Button
-        class={"m-4"}
-        onClick={() => navigate("/")}
-        hotkey={"h"}
-      >
-        Home <Kbd>h</Kbd>
-      </Button>
-      <h3>{episode().title}</h3>
-      <Video file={episode().path}/>
-      <div class={"flex flex-row justify-between w-7/12"}>
-        <Show when={previousEpisode()} fallback={<div class={"m-4"}/>}>
-          <Button class={"m-4 py-8"} hotkey={"q"} onClick={() => goToEpisode(previousEpisode()!)}>
-            Previous: {previousEpisode()!.title} <Kbd>q</Kbd>
-          </Button>
-        </Show>
+  return <div class={"min-h-screen flex flex-col justify-center items-center"}>
+    <Button
+      class={"m-4"}
+      onClick={() => navigate("/")}
+      hotkey={"h"}
+    >
+      Home <Kbd>h</Kbd>
+    </Button>
 
-        <Show when={nextEpisode()} fallback={<div class={"m-4"}/>}>
-          <Button class={"m-4 py-8"} hotkey={"w"} onClick={() => goToEpisode(nextEpisode()!)}>
-            Next: {nextEpisode()!.title} <Kbd>w</Kbd>
-          </Button>
-        </Show>
-      </div>
-      <div class={"flex flex-col my-4 justify-center"}>
-        <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
-        <ul class={"w-full flex flex-col"}>
-          <ShtCt
-            label={"Forward 5s"}
-            shortcut={"x"}
-          />
-          <ShtCt
-            label={"Rewind 5s"}
-            shortcut={"z"}
-          />
-          <ShtCt
-            label={"Toggle fullscreen"}
-            shortcut={"F"}
-          />
-          <ShtCt
-            label={"Playback speed +0.1"}
-            shortcut={"P"}
-          />
-          <ShtCt
-            label={"Playback speed -0.1"}
-            shortcut={"S"}
-          />
-          <ShtCt
-            label={"Pause/Play"}
-            shortcut={"K"}
-          />
-          <ShtCt
-            label={"Home"}
-            shortcut={"H"}
-          />
-          <ShtCt
-            label={"Next episode"}
-            shortcut={"W"}
-          />
-          <ShtCt
-            label={"Previous episode"}
-            shortcut={"Q"}
-          />
-        </ul>
+    <h3>{episode().title}</h3>
+    <Video file={episode().path}/>
+    <div class={"flex flex-row justify-between w-7/12"}>
+      <Show when={previousEpisode()} fallback={<div class={"m-4"}/>}>
+        <Button class={"m-4 py-8"} hotkey={"q"} onClick={() => goToEpisode(previousEpisode()!)}>
+          Previous: {previousEpisode()!.title} <Kbd>q</Kbd>
+        </Button>
+      </Show>
 
-      </div>
+      <Show when={nextEpisode()} fallback={<div class={"m-4"}/>}>
+        <Button class={"m-4 py-8"} hotkey={"w"} onClick={() => goToEpisode(nextEpisode()!)}>
+          Next: {nextEpisode()!.title} <Kbd>w</Kbd>
+        </Button>
+      </Show>
     </div>
-  )
+    <div class={"flex flex-col my-4 justify-center"}>
+      <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
+      <ul class={"w-full flex flex-col"}>
+        <ShtCt
+          label={"Forward 5s"}
+          shortcut={"x"}
+        />
+        <ShtCt
+          label={"Rewind 5s"}
+          shortcut={"z"}
+        />
+        <ShtCt
+          label={"Toggle fullscreen"}
+          shortcut={"F"}
+        />
+        <ShtCt
+          label={"Playback speed +0.1"}
+          shortcut={"P"}
+        />
+        <ShtCt
+          label={"Playback speed -0.1"}
+          shortcut={"S"}
+        />
+        <ShtCt
+          label={"Pause/Play"}
+          shortcut={"K"}
+        />
+        <ShtCt
+          label={"Home"}
+          shortcut={"H"}
+        />
+        <ShtCt
+          label={"Next episode"}
+          shortcut={"W"}
+        />
+        <ShtCt
+          label={"Previous episode"}
+          shortcut={"Q"}
+        />
+      </ul>
+      <h2 class={"font-bold text-center mt-8"}>Debugging</h2>
+      <div class={"flex flex-row"}>
+        <Button
+          class={"m-4"}
+          onClick={async () => {
+            await commands.removeBrowserExtension("HaramBlur - Blur Haram & NSFW Images & Videos")
+          }}
+        >
+          Remove extensions
+        </Button>
+        <Button
+          class={"m-4"}
+          onClick={async () => {
+            const d = await path.appDataDir()
+            await commands.addBrowserExtension(`${d}/extensions/pbcoegikffnadpahojjhgdladmmddeji`)
+          }}
+        >
+          Reinstall extensions
+        </Button>
+      </div>
+
+    </div>
+  </div>
 }
 
 function ShtCt(props: { label: string, shortcut: string }) {

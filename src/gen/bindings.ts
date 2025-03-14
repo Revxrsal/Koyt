@@ -7,6 +7,9 @@
 export const commands = {
 async addBrowserExtension(extensionFolder: string) : Promise<null> {
     return await TAURI_INVOKE("add_browser_extension", { extensionFolder });
+},
+async removeBrowserExtension(extensionName: string) : Promise<null> {
+    return await TAURI_INVOKE("remove_browser_extension", { extensionName });
 }
 }
 

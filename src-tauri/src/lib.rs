@@ -10,7 +10,7 @@ use tauri_specta::{collect_commands, ErrorHandlingMode};
 pub fn run() {
     let builder = tauri_specta::Builder::<tauri::Wry>::new()
         // Then register them (separated by a comma)
-        .commands(collect_commands![commands::add_browser_extension])
+        .commands(collect_commands![commands::add_browser_extension, commands::remove_browser_extension])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds

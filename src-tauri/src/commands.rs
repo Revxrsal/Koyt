@@ -17,3 +17,19 @@ pub async fn add_browser_extension<'a>(
     }
     Ok(())
 }
+
+#[specta::specta]
+#[tauri::command]
+pub async fn remove_browser_extension<'a>(
+    extension_name: String,
+    app_handle: AppHandle,
+) -> Result<(), String> {
+    let webview_windows = app_handle.webview_windows();
+    let window = webview_windows.get("main");
+    if let Some(window) = window {
+        SystemExtensionManager::remove_extension(window.as_ref(), &extension_name)
+            .unwrap();
+        return Ok(());
+    }
+    Ok(())
+}

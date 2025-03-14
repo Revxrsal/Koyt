@@ -37,13 +37,17 @@ pub fn open_main_window(app_handle: &AppHandle) {
 
 fn extract_all_zip_files(dir: &PathBuf, window: &WebviewWindow) {
     let mut extensions = vec![];
+    let user_data = window.app_handle().path().app_data_dir()
+        .unwrap();
+    let output_dir = user_data.join("extensions");
     for entry in fs::read_dir(dir).unwrap() {
         if let Ok(entry) = entry {
             let path = entry.path();
 
             if path.extension().and_then(|s| s.to_str()) == Some("zip") {
-                extensions.push(path.file_stem().unwrap().to_str().unwrap().to_owned());
-                extract_zip(dir, &path, window);
+                let stem = path.file_stem().unwrap().to_str().unwrap().to_owned();
+                extensions.push(stem);
+                extract_zip(&output_dir, &path, window);
             }
         }
     }
