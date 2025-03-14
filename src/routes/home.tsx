@@ -1,11 +1,12 @@
 import {Button} from "~/components/ui/button";
 import {Course, Episode} from "~/Course";
-import {For} from "solid-js";
+import {For, onMount} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 
 export default function Home() {
-  // const file = "S:\\ReactNative Course\\out_dir\\react-native-mobile-app-development\\20 - Payment System\\003 Signing Up For Stripe.mp4"
-
+  onMount(() => {
+    localStorage.setItem("oxide_last_loc", `/home`);
+  });
   return (
     <main class={"min-h-screen flex flex-col p-4 justify-center items-center"}>
       <h1 class={"text-center my-4 text-7xl font-bold select-none"}>
