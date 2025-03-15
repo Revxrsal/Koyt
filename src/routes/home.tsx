@@ -2,16 +2,20 @@ import {Button} from "~/components/ui/button";
 import {Course, Episode} from "~/Course";
 import {For, onMount} from "solid-js";
 import {useNavigate} from "@solidjs/router";
+import ExternalOpenButton from "~/components/ExternalOpenButton";
+
 
 export default function Home() {
   onMount(() => {
     localStorage.setItem("oxide_last_loc", `/home`);
   });
+
   return (
     <main class={"min-h-screen flex flex-col p-4 justify-center items-center"}>
-      <h1 class={"text-center my-4 text-7xl font-bold select-none"}>
+      <h1 class={"text-center mt-20 mb-8 text-7xl font-bold select-none"}>
         Oxide
       </h1>
+      <ExternalOpenButton/>
       <div class={"flex flex-col"}>
         <For each={Object.entries(Course)}>{([title, episodes], index) => (
           <Section title={title} episodes={episodes} index={index()}/>

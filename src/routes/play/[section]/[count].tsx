@@ -1,10 +1,13 @@
 import {Params, useNavigate, useParams} from "@solidjs/router";
 import {CourseEntries, Episode} from "~/Course";
 import Video from "~/components/video/Video";
-import {createMemo, JSXElement, onMount, Show} from "solid-js";
+import {createMemo, onMount, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
 import {commands} from "~/gen/bindings";
 import {path} from "@tauri-apps/api";
+import Kbd from "~/components/Kbd";
+import Shortcuts from "~/components/Shortcuts";
+import ExternalOpenButton from "~/components/ExternalOpenButton";
 
 export interface PathProps extends Params {
   section: string;
@@ -19,6 +22,7 @@ export default function Play() {
   const episode = createMemo(() => CourseEntries[section()][count()]);
   const previousEpisode = createMemo(() => findPreviousEpisode(section(), count()));
   const nextEpisode = createMemo(() => findNextEpisode(section(), count()));
+  console.log(episode())
 
   function goToEpisode(ep: Episode) {
     window.location.replace(episodeUrl(ep));
@@ -28,16 +32,21 @@ export default function Play() {
     localStorage.setItem("oxide_last_loc", `/play/${section()}/${count()}`);
   });
   return <div class={"min-h-screen flex flex-col justify-center items-center"}>
-    <Button
-      class={"m-4"}
-      onClick={() => navigate("/")}
-      hotkey={"h"}
-    >
-      Home <Kbd>h</Kbd>
-    </Button>
-
+    <div class={"flex flex-row"}>
+      <Button
+        class={"m-4"}
+        onClick={() => navigate("/")}
+        hotkey={"h"}
+      >
+        Home <Kbd>h</Kbd>
+      </Button>
+      <ExternalOpenButton/>
+    </div>
     <h3>{episode().title}</h3>
-    <Video file={episode().path}/>
+    <Video
+      file={episode().path}
+      id={`${section()}/${count()}`}
+    />
     <div class={"flex flex-row justify-between w-7/12"}>
       <Show when={previousEpisode()} fallback={<div class={"m-4"}/>}>
         <Button class={"m-4 py-8"} hotkey={"q"} onClick={() => goToEpisode(previousEpisode()!)}>
@@ -53,44 +62,7 @@ export default function Play() {
     </div>
     <div class={"flex flex-col my-4 justify-center"}>
       <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
-      <ul class={"w-full flex flex-col"}>
-        <ShtCt
-          label={"Forward 5s"}
-          shortcut={"x"}
-        />
-        <ShtCt
-          label={"Rewind 5s"}
-          shortcut={"z"}
-        />
-        <ShtCt
-          label={"Toggle fullscreen"}
-          shortcut={"F"}
-        />
-        <ShtCt
-          label={"Playback speed +0.1"}
-          shortcut={"P"}
-        />
-        <ShtCt
-          label={"Playback speed -0.1"}
-          shortcut={"S"}
-        />
-        <ShtCt
-          label={"Pause/Play"}
-          shortcut={"K"}
-        />
-        <ShtCt
-          label={"Home"}
-          shortcut={"H"}
-        />
-        <ShtCt
-          label={"Next episode"}
-          shortcut={"W"}
-        />
-        <ShtCt
-          label={"Previous episode"}
-          shortcut={"Q"}
-        />
-      </ul>
+      <Shortcuts/>
       <h2 class={"font-bold text-center mt-8"}>Debugging</h2>
       <div class={"flex flex-row"}>
         <Button
@@ -116,14 +88,6 @@ export default function Play() {
   </div>
 }
 
-function ShtCt(props: { label: string, shortcut: string }) {
-  return (
-    <li class={"list-disc flex flex-row justify-between my-2"}>
-      <span class={"font-semibold"}>{props.label}</span>
-      <kbd class={"font-normal text-sm bg-muted px-1.5 py-1.5 rounded shadow-2xl"}>{props.shortcut}</kbd>
-    </li>
-  )
-}
 
 function episodeUrl(episode: Episode): string {
   return `/play/${episode.section}/${episode.count}`
@@ -151,11 +115,3 @@ function findPreviousEpisode(section: number, count: number): Episode | null {
 }
 
 
-function Kbd(props: { children: JSXElement }) {
-  return (
-    <kbd
-      class="pointer-events-none inline-flex h-5 select-none items-center gap-1 ms-4 rounded border px-1.5 font-mono text-[10px] font-medium text-muted opacity-100">
-      {props.children}
-    </kbd>
-  )
-}

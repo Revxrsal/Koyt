@@ -5,10 +5,7 @@ import {createKeyBind} from "~/components/util/keyboard";
 import {Portal} from "solid-js/web";
 import {convertFileSrc} from "@tauri-apps/api/core";
 
-export default function Video(props: {
-  file: string,
-  controls?: JSXElement
-}) {
+export default function Video(props: {file: string, id?: string, controls?: JSXElement}) {
   const [controlsContainer, setControlsContainer] = createSignal<Element | null>(null);
   const assetUrl = convertFileSrc(props.file)
 
@@ -29,6 +26,7 @@ export default function Video(props: {
       key: "oxide.player"
     },
   });
+
   onMount(() => {
     player().on("enterfullscreen", async () => {
       setFullScreen(true);
@@ -43,6 +41,24 @@ export default function Video(props: {
       const controlsBar = document.querySelector('.plyr__controls');
       if (controlsBar) {
         setControlsContainer(controlsBar!)
+      }
+    })
+    player().on("ready", () => {
+      if (props.id) {
+        const lastStoppedAt = localStorage.getItem(`oxide_${props.id}`);
+        if (lastStoppedAt !== null) {
+          video!.currentTime = (parseInt(lastStoppedAt, 10));
+          console.log(`Started from where you stopped last time: ${lastStoppedAt}`);
+        }
+      }
+    })
+
+    player().on("timeupdate", () => {
+      if (props.id) {
+        const time = player().currentTime
+        if (time !== 0) {
+          localStorage.setItem(`oxide_${props.id}`, time.toString());
+        }
       }
     })
   })
