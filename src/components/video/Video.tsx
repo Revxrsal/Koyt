@@ -5,7 +5,7 @@ import {createKeyBind} from "~/components/util/keyboard";
 import {Portal} from "solid-js/web";
 import {convertFileSrc} from "@tauri-apps/api/core";
 
-export default function Video(props: {file: string, id?: string, controls?: JSXElement}) {
+export default function Video(props: { file: string, id?: string, controls?: JSXElement }) {
   const [controlsContainer, setControlsContainer] = createSignal<Element | null>(null);
   const assetUrl = convertFileSrc(props.file)
 
@@ -28,13 +28,21 @@ export default function Video(props: {file: string, id?: string, controls?: JSXE
   });
 
   onMount(() => {
+    const wasFullScreen = localStorage.getItem("oxide-was-full-screen")
+    if (wasFullScreen === "true") {
+      player().fullscreen.enter()
+    } else if (wasFullScreen === "false") {
+      player().fullscreen.exit()
+    }
     player().on("enterfullscreen", async () => {
       setFullScreen(true);
       await getCurrentWindow().setFullscreen(true);
+      localStorage.setItem("oxide-was-full-screen", "true")
     })
     player().on("exitfullscreen", async () => {
       setFullScreen(false);
       await getCurrentWindow().setFullscreen(false);
+      localStorage.setItem("oxide-was-full-screen", "false")
     })
     player().on("ratechange", () => {
       setSpeed(player().speed);
