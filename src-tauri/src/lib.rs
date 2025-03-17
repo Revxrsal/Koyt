@@ -38,7 +38,7 @@ pub fn run() {
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_shortcuts(["ctrl+shift+c", "command+shift+c"]).unwrap()
-                .with_handler(|app, shortcut, event| {
+                .with_handler(|app, _shortcut, event| {
                     if event.state == ShortcutState::Pressed {
                         GlobalToggleEvent.emit(app).unwrap()
                     }
