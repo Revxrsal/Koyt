@@ -1,9 +1,10 @@
 import {createPlayer} from "~/player/player";
-import {createSignal, JSXElement, onMount, Show} from "solid-js";
+import {createSignal, JSXElement, onCleanup, onMount, Show} from "solid-js";
 import {getCurrentWindow} from "@tauri-apps/api/window";
 import {createKeyBind} from "~/components/util/keyboard";
 import {Portal} from "solid-js/web";
 import {convertFileSrc} from "@tauri-apps/api/core";
+import {register, unregister} from "@tauri-apps/plugin-global-shortcut";
 
 export default function Video(props: { file: string, id?: string, controls?: JSXElement }) {
   const [controlsContainer, setControlsContainer] = createSignal<Element | null>(null);
@@ -27,7 +28,7 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
     },
   });
 
-  onMount(() => {
+  onMount(async () => {
     const wasFullScreen = localStorage.getItem("oxide-was-full-screen")
     if (wasFullScreen === "true") {
       player().fullscreen.enter()
@@ -68,6 +69,13 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
           localStorage.setItem(`oxide_${props.id}`, time.toString());
         }
       }
+    })
+    await register('CommandOrControl+Shift+C', (event) => {
+      if (event.state == "Released")
+        player().togglePlay();
+    });
+    onCleanup(async () => {
+      await unregister('CommandOrControl+Shift+C');
     })
   })
   createKeyBind("s", () => {

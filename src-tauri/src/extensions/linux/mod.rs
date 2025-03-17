@@ -8,7 +8,11 @@ pub struct ExtensionManager;
 
 #[allow(unused_variables)]
 impl PlatformExtensionManager for ExtensionManager {
-    fn set_extension_enabled(webview: &Webview, extension_name: &str, enabled: bool) -> Result<(), Error> {
+    fn set_extension_enabled(
+        webview: &Webview,
+        extension_name: &str,
+        enabled: bool,
+    ) -> Result<(), Error> {
         Err(Unsupported)
     }
 

@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Oxide",
   "version": "0.1.0",
-  "identifier": "net.kasasbeh.oxider",
+  "identifier": "net.kasasbeh.oxide",
   "build": {
     "frontendDist": "../.output/public",
     "devUrl": "http://localhost:3000",

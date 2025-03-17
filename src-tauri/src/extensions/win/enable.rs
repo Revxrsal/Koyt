@@ -1,6 +1,10 @@
 use crate::extensions::ExtensionExt;
 use tauri::webview::PlatformWebview;
-use webview2_com_sys::Microsoft::Web::WebView2::Win32::{ICoreWebView2BrowserExtensionList, ICoreWebView2Profile7, ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler, ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl, ICoreWebView2_13};
+use webview2_com_sys::Microsoft::Web::WebView2::Win32::{
+    ICoreWebView2BrowserExtensionList, ICoreWebView2Profile7,
+    ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler,
+    ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl, ICoreWebView2_13,
+};
 use windows::core::{implement, Interface, HRESULT};
 
 pub fn set_extension_enabled(
@@ -27,13 +31,22 @@ struct EnableExtensionCallback {
 
 impl EnableExtensionCallback {
     pub fn new(extension_name: String, new_enabled_state: bool) -> Self {
-        Self { extension_name, new_enabled_state }
+        Self {
+            extension_name,
+            new_enabled_state,
+        }
     }
 }
 
-impl ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl for EnableExtensionCallback_Impl {
+impl ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl
+    for EnableExtensionCallback_Impl
+{
     #[allow(non_snake_case)]
-    fn Invoke(&self, error_code: HRESULT, extensions: windows_core::Ref<'_, ICoreWebView2BrowserExtensionList>) -> windows_core::Result<()> {
+    fn Invoke(
+        &self,
+        error_code: HRESULT,
+        extensions: windows_core::Ref<'_, ICoreWebView2BrowserExtensionList>,
+    ) -> windows_core::Result<()> {
         if error_code.is_err() {
             return error_code.ok();
         }

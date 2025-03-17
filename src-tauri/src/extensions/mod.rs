@@ -10,8 +10,12 @@ mod macos;
 #[cfg(target_os = "macos")]
 use macos as sys;
 
+pub mod downloader;
 #[cfg(target_os = "linux")]
 mod linux;
+pub mod manifest;
+pub mod version;
+pub mod commands;
 
 #[cfg(target_os = "linux")]
 use linux as sys;
@@ -82,7 +86,11 @@ pub trait PlatformExtensionManager {
 
     fn remove_extension(webview: &Webview, extension_name: &str) -> Result<(), Error>;
 
-    fn set_extension_enabled(webview: &Webview, extension_name: &str, enabled: bool) -> Result<(), Error>;
+    fn set_extension_enabled(
+        webview: &Webview,
+        extension_name: &str,
+        enabled: bool,
+    ) -> Result<(), Error>;
 }
 
 pub trait ExtensionExt {

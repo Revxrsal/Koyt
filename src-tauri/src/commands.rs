@@ -1,35 +1,30 @@
-use std::path::PathBuf;
-use tauri::{AppHandle, Manager};
-use crate::extensions::{PlatformExtensionManager, SystemExtensionManager};
+use crate::settings::running_app_state::RunningAppState;
+use crate::settings::AppSettings;
+use specta::specta;
+use std::ops::Deref;
+use std::sync::Arc;
+use tauri::{command, State};
+use tokio::sync::RwLock;
 
-#[specta::specta]
-#[tauri::command]
-pub async fn add_browser_extension<'a>(
-    extension_folder: String,
-    app_handle: AppHandle,
-) -> Result<(), String> {
-    let webview_windows = app_handle.webview_windows();
-    let window = webview_windows.get("main");
-    if let Some(window) = window {
-        SystemExtensionManager::add_extension(window.as_ref(), PathBuf::from(extension_folder))
-            .unwrap();
-        return Ok(());
-    }
-    Ok(())
+pub type TauriRunningAppState<'a> = State<'a, Arc<RwLock<RunningAppState>>>;
+
+#[command]
+#[specta]
+pub async fn get_settings<'a>(state: TauriRunningAppState<'a>) -> Result<AppSettings, ()> {
+    let state = state.read().await;
+    Ok(state.settings().clone())
 }
 
-#[specta::specta]
-#[tauri::command]
-pub async fn remove_browser_extension<'a>(
-    extension_name: String,
-    app_handle: AppHandle,
-) -> Result<(), String> {
-    let webview_windows = app_handle.webview_windows();
-    let window = webview_windows.get("main");
-    if let Some(window) = window {
-        SystemExtensionManager::remove_extension(window.as_ref(), &extension_name)
-            .unwrap();
-        return Ok(());
-    }
+#[command]
+#[specta]
+pub async fn set_settings<'a>(
+    app_settings: AppSettings,
+    state: TauriRunningAppState<'a>,
+) -> Result<(), ()> {
+    let mut current = state.write().await;
+    *current.settings_mut() = app_settings;
+    drop(current);
+
+    RunningAppState::schedule_saving(Arc::clone(state.deref())).await;
     Ok(())
 }

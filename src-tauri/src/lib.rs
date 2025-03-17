@@ -1,16 +1,25 @@
-mod commands;
-mod extensions;
-mod window;
+pub mod commands;
+pub mod extensions;
+pub mod settings;
+pub mod setup;
+pub mod window;
 
-use crate::window::open_main_window;
-use tauri::Manager;
+use crate::commands::*;
+use crate::extensions::commands::*;
+
 use tauri_specta::{collect_commands, ErrorHandlingMode};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri_specta::Builder::<tauri::Wry>::new()
         // Then register them (separated by a comma)
-        .commands(collect_commands![commands::add_browser_extension, commands::remove_browser_extension])
+        .commands(collect_commands![
+            download_extension,
+            remove_extension,
+            set_extension_enabled,
+            get_settings,
+            set_settings
+        ])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
@@ -22,6 +31,7 @@ pub fn run() {
         .expect("Failed to export typescript bindings");
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
@@ -35,8 +45,7 @@ pub fn run() {
                 )?;
             }
             builder.mount_events(app);
-            open_main_window(app.app_handle());
-            Ok(())
+            setup::setup(app)
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

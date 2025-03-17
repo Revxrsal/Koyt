@@ -39,6 +39,10 @@ export default function Shortcuts() {
         label={"Previous episode"}
         shortcut={"Q"}
       />
+      <ShtCt
+        label={"Play/Pause (even unfocused)"}
+        shortcut={"Ctrl + Shift + C"}
+      />
     </ul>
   )
 }

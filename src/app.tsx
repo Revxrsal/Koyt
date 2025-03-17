@@ -4,17 +4,21 @@ import {Suspense} from "solid-js";
 import "./app.css";
 import "./plyr.css";
 import {ColorModeProvider, ColorModeScript} from "@kobalte/core";
+import {createSettingsProvider} from "~/util/settings";
 
 export default function App() {
+  const {SettingsProvider} = createSettingsProvider()
   return (
     <Router
       root={props => (
         <>
           <Suspense>
-            <ColorModeScript/>
-            <ColorModeProvider>
-              {props.children}
-            </ColorModeProvider>
+            <SettingsProvider>
+              <ColorModeScript/>
+              <ColorModeProvider>
+                {props.children}
+              </ColorModeProvider>
+            </SettingsProvider>
           </Suspense>
         </>
       )}

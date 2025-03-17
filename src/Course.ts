@@ -1154,3 +1154,4 @@ export const Course: Record<string, Episode[]> = {
   ]
 }
 export const CourseEntries = Object.values(Course)
+export const CourseSections = Object.keys(Course)

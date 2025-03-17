@@ -2,22 +2,36 @@ use std::ffi::OsStr;
 use std::os::windows::ffi::OsStrExt;
 use std::path::Path;
 use tauri::webview::PlatformWebview;
-use webview2_com_sys::Microsoft::Web::WebView2::Win32::{ICoreWebView2BrowserExtension, ICoreWebView2Profile7, ICoreWebView2ProfileAddBrowserExtensionCompletedHandler, ICoreWebView2ProfileAddBrowserExtensionCompletedHandler_Impl, ICoreWebView2_13};
-use windows::core::{implement, Interface, HRESULT, PCWSTR, Result};
+use webview2_com_sys::Microsoft::Web::WebView2::Win32::{
+    ICoreWebView2BrowserExtension, ICoreWebView2Profile7,
+    ICoreWebView2ProfileAddBrowserExtensionCompletedHandler,
+    ICoreWebView2ProfileAddBrowserExtensionCompletedHandler_Impl, ICoreWebView2_13,
+};
+use windows::core::{implement, Interface, Result, HRESULT, PCWSTR};
 
 #[implement(ICoreWebView2ProfileAddBrowserExtensionCompletedHandler)]
 pub struct AddBrowserExtensionCallback;
 
-impl ICoreWebView2ProfileAddBrowserExtensionCompletedHandler_Impl for AddBrowserExtensionCallback_Impl {
+impl ICoreWebView2ProfileAddBrowserExtensionCompletedHandler_Impl
+    for AddBrowserExtensionCallback_Impl
+{
     #[allow(non_snake_case)]
-    fn Invoke(&self, error_code: HRESULT, _extension: windows_core::Ref<'_, ICoreWebView2BrowserExtension>) -> Result<()> {
+    fn Invoke(
+        &self,
+        error_code: HRESULT,
+        _extension: windows_core::Ref<'_, ICoreWebView2BrowserExtension>,
+    ) -> Result<()> {
         error_code.ok()
     }
 }
 
-pub fn add_extension_to_profile(profile: &ICoreWebView2Profile7, extension_folder: &OsStr) -> Result<()> {
+pub fn add_extension_to_profile(
+    profile: &ICoreWebView2Profile7,
+    extension_folder: &OsStr,
+) -> Result<()> {
     unsafe {
-        let str: Vec<u16> = extension_folder.encode_wide()
+        let str: Vec<u16> = extension_folder
+            .encode_wide()
             .chain(std::iter::once(0))
             .collect();
         let path_ptr = PCWSTR(str.as_ptr());

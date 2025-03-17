@@ -1,12 +1,13 @@
 use crate::extensions::ExtensionExt;
 use tauri::webview::PlatformWebview;
-use webview2_com_sys::Microsoft::Web::WebView2::Win32::{ICoreWebView2BrowserExtensionList, ICoreWebView2Profile7, ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler, ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl, ICoreWebView2_13};
+use webview2_com_sys::Microsoft::Web::WebView2::Win32::{
+    ICoreWebView2BrowserExtensionList, ICoreWebView2Profile7,
+    ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler,
+    ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl, ICoreWebView2_13,
+};
 use windows::core::{implement, Interface, Result, HRESULT};
 
-pub fn remove_extension(
-    webview: &PlatformWebview,
-    extension_name: &str,
-) -> anyhow::Result<()> {
+pub fn remove_extension(webview: &PlatformWebview, extension_name: &str) -> anyhow::Result<()> {
     unsafe {
         let web_view2 = webview.controller().CoreWebView2()?;
         let profile = Interface::cast::<ICoreWebView2_13>(&web_view2)?.Profile()?;
@@ -29,9 +30,15 @@ impl RemoveExtensionCallback {
     }
 }
 
-impl ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl for RemoveExtensionCallback_Impl {
+impl ICoreWebView2ProfileGetBrowserExtensionsCompletedHandler_Impl
+    for RemoveExtensionCallback_Impl
+{
     #[allow(non_snake_case)]
-    fn Invoke(&self, error_code: HRESULT, extensions: windows_core::Ref<'_, ICoreWebView2BrowserExtensionList>) -> Result<()> {
+    fn Invoke(
+        &self,
+        error_code: HRESULT,
+        extensions: windows_core::Ref<'_, ICoreWebView2BrowserExtensionList>,
+    ) -> Result<()> {
         if error_code.is_err() {
             return error_code.ok();
         }

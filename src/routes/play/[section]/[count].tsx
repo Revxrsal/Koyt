@@ -1,13 +1,12 @@
 import {Params, useNavigate, useParams} from "@solidjs/router";
-import {CourseEntries, Episode} from "~/Course";
+import {CourseEntries, CourseSections, Episode} from "~/Course";
 import Video from "~/components/video/Video";
 import {createMemo, onMount, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
-import {commands} from "~/gen/bindings";
-import {path} from "@tauri-apps/api";
 import Kbd from "~/components/Kbd";
 import Shortcuts from "~/components/Shortcuts";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
+import Extensions from "~/components/extensions/Extensions";
 
 export interface PathProps extends Params {
   section: string;
@@ -43,6 +42,7 @@ export default function Play() {
       <ExternalOpenButton/>
     </div>
     <h3>{episode().title}</h3>
+    <p>{CourseSections[episode().section]}</p>
     <Video
       file={episode().path}
       id={`${section()}/${count()}`}
@@ -60,30 +60,10 @@ export default function Play() {
         </Button>
       </Show>
     </div>
-    <div class={"flex flex-col my-4 justify-center"}>
+    <div class={"flex flex-col w-7/12 my-4 justify-center"}>
       <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
       <Shortcuts/>
-      <h2 class={"font-bold text-center mt-8"}>Debugging</h2>
-      <div class={"flex flex-row"}>
-        <Button
-          class={"m-4"}
-          onClick={async () => {
-            await commands.removeBrowserExtension("HaramBlur - Blur Haram & NSFW Images & Videos")
-          }}
-        >
-          Remove extensions
-        </Button>
-        <Button
-          class={"m-4"}
-          onClick={async () => {
-            const d = await path.appDataDir()
-            await commands.addBrowserExtension(`${d}/extensions/pbcoegikffnadpahojjhgdladmmddeji`)
-          }}
-        >
-          Reinstall extensions
-        </Button>
-      </div>
-
+      <Extensions/>
     </div>
   </div>
 }
