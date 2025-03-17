@@ -75,7 +75,6 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
     })
   })
   onCleanup(() => {
-    console.log("Cleanup")
     unlistenToGlobalToggle?.()
   })
   createKeyBind("s", () => {
