@@ -21,7 +21,6 @@ export default function Play() {
   const episode = createMemo(() => CourseEntries[section()][count()]);
   const previousEpisode = createMemo(() => findPreviousEpisode(section(), count()));
   const nextEpisode = createMemo(() => findNextEpisode(section(), count()));
-  console.log(episode())
 
   function goToEpisode(ep: Episode) {
     window.location.replace(episodeUrl(ep));

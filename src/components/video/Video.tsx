@@ -4,7 +4,8 @@ import {getCurrentWindow} from "@tauri-apps/api/window";
 import {createKeyBind} from "~/components/util/keyboard";
 import {Portal} from "solid-js/web";
 import {convertFileSrc} from "@tauri-apps/api/core";
-import {register, unregister} from "@tauri-apps/plugin-global-shortcut";
+import {events} from "~/gen/bindings";
+import {UnlistenFn} from "@tauri-apps/api/event";
 
 export default function Video(props: { file: string, id?: string, controls?: JSXElement }) {
   const [controlsContainer, setControlsContainer] = createSignal<Element | null>(null);
@@ -27,7 +28,7 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
       key: "oxide.player"
     },
   });
-
+  let unlistenToGlobalToggle: UnlistenFn | null
   onMount(async () => {
     const wasFullScreen = localStorage.getItem("oxide-was-full-screen")
     if (wasFullScreen === "true") {
@@ -57,7 +58,6 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
         const lastStoppedAt = localStorage.getItem(`oxide_${props.id}`);
         if (lastStoppedAt !== null) {
           video!.currentTime = (parseInt(lastStoppedAt, 10));
-          console.log(`Started from where you stopped last time: ${lastStoppedAt}`);
         }
       }
     })
@@ -70,13 +70,13 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
         }
       }
     })
-    await register('CommandOrControl+Shift+C', (event) => {
-      if (event.state == "Released")
-        player().togglePlay();
-    });
-    onCleanup(async () => {
-      await unregister('CommandOrControl+Shift+C');
+    unlistenToGlobalToggle = await events.globalToggleEvent.listen(() => {
+      player().togglePlay()
     })
+  })
+  onCleanup(() => {
+    console.log("Cleanup")
+    unlistenToGlobalToggle?.()
   })
   createKeyBind("s", () => {
     player().speed = Math.max(player().speed - 0.1, 0.5);

@@ -6,8 +6,11 @@ pub mod window;
 
 use crate::commands::*;
 use crate::extensions::commands::*;
+use tauri_plugin_global_shortcut::ShortcutState;
 
-use tauri_specta::{collect_commands, ErrorHandlingMode};
+use crate::setup::GlobalToggleEvent;
+use tauri_specta::{collect_commands, collect_events, ErrorHandlingMode};
+use tauri_specta::Event;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -20,6 +23,7 @@ pub fn run() {
             get_settings,
             set_settings
         ])
+        .events(collect_events![GlobalToggleEvent])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
@@ -31,7 +35,16 @@ pub fn run() {
         .expect("Failed to export typescript bindings");
 
     tauri::Builder::default()
-        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(
+            tauri_plugin_global_shortcut::Builder::new()
+                .with_shortcuts(["ctrl+shift+c", "command+shift+c"]).unwrap()
+                .with_handler(|app, shortcut, event| {
+                    if event.state == ShortcutState::Pressed {
+                        GlobalToggleEvent.emit(app).unwrap()
+                    }
+                })
+                .build(),
+        )
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())

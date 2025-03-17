@@ -25,6 +25,11 @@ async setSettings(appSettings: AppSettings) : Promise<null> {
 /** user-defined events **/
 
 
+export const events = __makeEvents__<{
+globalToggleEvent: GlobalToggleEvent
+}>({
+globalToggleEvent: "global-toggle-event"
+})
 
 /** user-defined constants **/
 
@@ -39,6 +44,7 @@ export type Arch = "ARM" | "X86_32" | "X86_64"
  */
 export type BrowserExtension = { id: string; name: string; version: string; description: string; directory: string; enabled: boolean }
 export type ChromeVersion = { major: number; minor: number; build: number; patch: number }
+export type GlobalToggleEvent = null
 
 /** tauri-specta globals **/
 

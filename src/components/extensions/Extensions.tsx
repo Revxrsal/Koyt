@@ -47,7 +47,6 @@ function DisplayExtension(props: { extension: BrowserExtension, index: number })
           checked={props.extension.enabled}
           onChange={async (e) => {
             setSettings("downloaded_extensions", props.index, "enabled", e);
-            console.log("Checked: ", e)
             await commands.setExtensionEnabled(props.extension.name, e)
           }}
         >
@@ -123,7 +122,6 @@ function InstallModalContent(props: { onClose: () => void }) {
     setDownloading(true)
     try {
       const extension = await commands.downloadExtension(url(), getChromeVersion(), getNaclArch())
-      console.log(extension)
       setDownloading(false)
       props.onClose()
       const index = settings.downloaded_extensions.findIndex(v => v.id == extension.id);
@@ -135,7 +133,6 @@ function InstallModalContent(props: { onClose: () => void }) {
         })
       } else {
         setSettings("downloaded_extensions", v => [...v, extension])
-        console.log(`Added extension. New settings:`, unwrap(settings))
       }
       window.location.reload()
     } catch (e) {
@@ -144,7 +141,6 @@ function InstallModalContent(props: { onClose: () => void }) {
         setError(e.message)
       } else {
         setError(e as string)
-        console.log(typeof e)
       }
     }
   }
