@@ -6,11 +6,11 @@ pub mod window;
 
 use crate::commands::*;
 use crate::extensions::commands::*;
-use tauri_plugin_global_shortcut::ShortcutState;
+use tauri_plugin_global_shortcut::{Code, Modifiers, ShortcutState};
 
-use crate::setup::GlobalToggleEvent;
-use tauri_specta::{collect_commands, collect_events, ErrorHandlingMode};
+use crate::setup::{GlobalRewindEvent, GlobalToggleEvent, GlobalForwardEvent};
 use tauri_specta::Event;
+use tauri_specta::{collect_commands, collect_events, ErrorHandlingMode};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -23,7 +23,7 @@ pub fn run() {
             get_settings,
             set_settings
         ])
-        .events(collect_events![GlobalToggleEvent])
+        .events(collect_events![GlobalToggleEvent, GlobalRewindEvent, GlobalForwardEvent])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
@@ -37,10 +37,19 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
-                .with_shortcuts(["ctrl+shift+c", "command+shift+c"]).unwrap()
-                .with_handler(|app, _shortcut, event| {
+                .with_shortcuts(["ctrl+shift+c", "ctrl+shift+x", "ctrl+shift+z"])
+                .unwrap()
+                .with_handler(|app, shortcut, event| {
                     if event.state == ShortcutState::Pressed {
-                        GlobalToggleEvent.emit(app).unwrap()
+                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyZ) {
+                            GlobalRewindEvent.emit(app).unwrap()
+                        }
+                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyC) {
+                            GlobalToggleEvent.emit(app).unwrap()
+                        }
+                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyX) {
+                            GlobalForwardEvent.emit(app).unwrap()
+                        }
                     }
                 })
                 .build(),

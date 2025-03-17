@@ -29,6 +29,8 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
     },
   });
   let unlistenToGlobalToggle: UnlistenFn | null
+  let unlistenToGlobalForward: UnlistenFn | null
+  let unlistenToGlobalRewind: UnlistenFn | null
   onMount(async () => {
     const wasFullScreen = localStorage.getItem("oxide-was-full-screen")
     if (wasFullScreen === "true") {
@@ -73,9 +75,19 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
     unlistenToGlobalToggle = await events.globalToggleEvent.listen(() => {
       player().togglePlay()
     })
+    
+    unlistenToGlobalRewind = await events.globalRewindEvent.listen(() => {
+      player().rewind(5)
+    })
+    
+    unlistenToGlobalForward = await events.globalForwardEvent.listen(() => {
+      player().forward(5)
+    })
   })
   onCleanup(() => {
     unlistenToGlobalToggle?.()
+    unlistenToGlobalForward?.()
+    unlistenToGlobalRewind?.()
   })
   createKeyBind("s", () => {
     player().speed = Math.max(player().speed - 0.1, 0.5);
@@ -94,7 +106,7 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
       </div>
       <Show when={controlsContainer()}>
         <Portal mount={controlsContainer()!}>
-          <span class="bg-black bg-opacity-50 ms-1   px-3 py-1 rounded text-sm">
+          <span class="bg-black bg-opacity-50 ms-1 px-3 py-1 rounded text-sm">
             ×{speed().toFixed(2)}
           </span>
           {props.controls}

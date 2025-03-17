@@ -43,6 +43,14 @@ export default function Shortcuts() {
         label={"Play/Pause (even unfocused)"}
         shortcut={"Ctrl + Shift + C"}
       />
+      <ShtCt
+        label={"Forward 5s (even unfocused)"}
+        shortcut={"Ctrl + Shift + X"}
+      />
+      <ShtCt
+        label={"Rewind 5s (even unfocused)"}
+        shortcut={"Ctrl + Shift + Z"}
+      />
     </ul>
   )
 }
