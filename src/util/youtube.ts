@@ -36,5 +36,21 @@ export function embed(videoId: string): string {
   return `${embedBase}?${params.toString()}`;
 }
 
+export async function getYouTubeTitle(url: string) {
+  const oEmbedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+
+  try {
+    const response = await fetch(oEmbedUrl);
+    if (!response.ok)
+      throw new Error('Video not found or invalid URL');
+
+    const data = await response.json();
+    return data.title;
+  } catch (error) {
+    console.error('Error fetching video title:', error);
+    return null;
+  }
+}
+
 // Example usage
 // Output: https://www.youtube.com/embed/3Em_ixbHYBQ?origin=https%3A%2F%2Fplyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1

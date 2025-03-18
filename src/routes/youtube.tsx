@@ -7,14 +7,17 @@ import Shortcuts from "~/components/Shortcuts";
 import Extensions from "~/components/extensions/Extensions";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
+import { getYouTubeTitle } from "~/util/youtube";
 
 export default function YouTube() {
   const navigate = useNavigate();
   const [url, setURL] = createSignal<string>("");
-  onMount(() => {
+  const [title, setTitle] = createSignal<string>("");
+  onMount(async () => {
     const url = localStorage.getItem("oxide_yt");
     if (url) {
       setURL(url);
+      setTitle(await getYouTubeTitle(url));
     }
   })
   createEffect(() => {
@@ -37,7 +40,12 @@ export default function YouTube() {
 
       <Show when={url()}>
         <Video youtube={url()!} id={url()!} />
-        <p class={"my-8 max-w-[58%]"}>{url()}</p>
+      </Show>
+      <Show when={title()}>
+        <p class={"mt-8 mb-2 max-w-[58%]"}>{title()}</p>
+      </Show>
+      <Show when={url()}>
+        <a href={url()} class={"underline max-w-[58%]"}>{url()}</a>
       </Show>
       <div class={"flex flex-col w-7/12 my-4 justify-center"}>
         <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>

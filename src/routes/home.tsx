@@ -3,6 +3,7 @@ import {Course, Episode} from "~/Course";
 import {For, onMount} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
+import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 
 
 export default function Home() {
@@ -15,10 +16,13 @@ export default function Home() {
       <h1 class={"text-center mt-20 mb-8 text-7xl font-bold select-none"}>
         Oxide
       </h1>
-      <ExternalOpenButton/>
+      <div class={"flex flex-row mb-8"}>
+        <ExternalOpenButton />
+        <ExternalOpenYouTubeButton />
+      </div>
       <div class={"flex flex-col"}>
         <For each={Object.entries(Course)}>{([title, episodes], index) => (
-          <Section title={title} episodes={episodes} index={index()}/>
+          <Section title={title} episodes={episodes} index={index()} />
         )}</For>
       </div>
     </main>
@@ -35,11 +39,11 @@ function Section(props: {
       <h4 class={"select-none"}>{props.title}</h4>
       <div class={"flex flex-col"}>
         <For each={props.episodes}>{episode => (
-          <ShowEpisode episode={episode} index={props.index}/>
+          <ShowEpisode episode={episode} index={props.index} />
         )}
         </For>
       </div>
-      <hr class={"my-3"}/>
+      <hr class={"my-3"} />
     </div>
   )
 }
