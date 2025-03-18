@@ -6,12 +6,14 @@ import {Portal} from "solid-js/web";
 import {convertFileSrc} from "@tauri-apps/api/core";
 import {events} from "~/gen/bindings";
 import {UnlistenFn} from "@tauri-apps/api/event";
+import {convertToEmbedUrl} from "~/util/youtube";
 
-export default function Video(props: { file: string, id?: string, controls?: JSXElement }) {
+export default function Video(props: { file?: string, youtube?: string, id?: string, controls?: JSXElement }) {
   const [controlsContainer, setControlsContainer] = createSignal<Element | null>(null);
-  const assetUrl = convertFileSrc(props.file)
+  const assetUrl = props.youtube ? convertToEmbedUrl(props.youtube) : convertFileSrc(props.file!)
 
-  let video: HTMLVideoElement | undefined;
+  let video: HTMLElement | undefined;
+  let frame: HTMLIFrameElement | undefined;
   const [speed, setSpeed] = createSignal(1.0);
   const [fullScreen, setFullScreen] = createSignal(false);
   const player = createPlayer(() => video!, {
@@ -27,6 +29,7 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
       enabled: true,
       key: "oxide.player"
     },
+
   });
   let unlistenToGlobalToggle: UnlistenFn | null
   let unlistenToGlobalForward: UnlistenFn | null
@@ -59,7 +62,12 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
       if (props.id) {
         const lastStoppedAt = localStorage.getItem(`oxide_${props.id}`);
         if (lastStoppedAt !== null) {
-          video!.currentTime = (parseInt(lastStoppedAt, 10));
+          if (video instanceof HTMLVideoElement) {
+            video!.currentTime = (parseInt(lastStoppedAt, 10));
+          } else {
+            // idk it works don't touch it
+            player().forward(parseInt(lastStoppedAt, 10));
+          }
         }
       }
     })
@@ -75,11 +83,11 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
     unlistenToGlobalToggle = await events.globalToggleEvent.listen(() => {
       player().togglePlay()
     })
-    
+
     unlistenToGlobalRewind = await events.globalRewindEvent.listen(() => {
       player().rewind(5)
     })
-    
+
     unlistenToGlobalForward = await events.globalForwardEvent.listen(() => {
       player().forward(5)
     })
@@ -100,9 +108,21 @@ export default function Video(props: { file: string, id?: string, controls?: JSX
   return (
     <>
       <div class={"w-7/12 justify-center rounded-md p-2 relative inline-block"}>
-        <video class={fullScreen() ? "" : "rounded-md"} ref={v => video = v} controls={true}>
-          <source type={"video/mp4"} src={assetUrl}/>
-        </video>
+        <Show when={props.file}>
+          <video class={fullScreen() ? "" : "rounded-md"} ref={v => video = v} controls={true}>
+            <source type={"video/mp4"} src={assetUrl} />
+          </video>
+        </Show>
+        <Show when={props.youtube}>
+          <div class="plyr__video-embed" id="player" ref={v => video = v}>
+            <iframe
+              ref={v => frame = v}
+              src={assetUrl}
+              allowfullscreen={true}
+              allow="autoplay"
+            />
+          </div>
+        </Show>
       </div>
       <Show when={controlsContainer()}>
         <Portal mount={controlsContainer()!}>

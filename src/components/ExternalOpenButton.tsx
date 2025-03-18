@@ -1,10 +1,11 @@
-import {useNavigate} from "@solidjs/router";
+import {useLocation, useNavigate} from "@solidjs/router";
 import {open} from "@tauri-apps/plugin-dialog";
 import {Button} from "~/components/ui/button";
 import Kbd from "~/components/Kbd";
 
 export default function ExternalOpenButton() {
   const navigate = useNavigate();
+  const loc = useLocation();
 
   async function openFilePicker() {
     const file = await open({
@@ -14,7 +15,11 @@ export default function ExternalOpenButton() {
     });
     if (file) {
       localStorage.setItem("oxide_local", file);
-      navigate("/local")
+      if (loc.pathname == "/local") {
+        window.location.reload();
+      } else {
+        navigate("/local")
+      }
     }
   }
 

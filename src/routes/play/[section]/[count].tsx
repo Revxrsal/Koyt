@@ -7,6 +7,7 @@ import Kbd from "~/components/Kbd";
 import Shortcuts from "~/components/Shortcuts";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
 import Extensions from "~/components/extensions/Extensions";
+import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 
 export interface PathProps extends Params {
   section: string;
@@ -38,7 +39,8 @@ export default function Play() {
       >
         Home <Kbd>h</Kbd>
       </Button>
-      <ExternalOpenButton/>
+      <ExternalOpenButton />
+      <ExternalOpenYouTubeButton />
     </div>
     <h3>{episode().title}</h3>
     <p>{CourseSections[episode().section]}</p>
@@ -47,13 +49,13 @@ export default function Play() {
       id={`${section()}/${count()}`}
     />
     <div class={"flex flex-row justify-between w-7/12"}>
-      <Show when={previousEpisode()} fallback={<div class={"m-4"}/>}>
+      <Show when={previousEpisode()} fallback={<div class={"m-4"} />}>
         <Button class={"m-4 py-8"} hotkey={"q"} onClick={() => goToEpisode(previousEpisode()!)}>
           Previous: {previousEpisode()!.title} <Kbd>q</Kbd>
         </Button>
       </Show>
 
-      <Show when={nextEpisode()} fallback={<div class={"m-4"}/>}>
+      <Show when={nextEpisode()} fallback={<div class={"m-4"} />}>
         <Button class={"m-4 py-8"} hotkey={"w"} onClick={() => goToEpisode(nextEpisode()!)}>
           Next: {nextEpisode()!.title} <Kbd>w</Kbd>
         </Button>
@@ -61,8 +63,8 @@ export default function Play() {
     </div>
     <div class={"flex flex-col w-7/12 my-4 justify-center"}>
       <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
-      <Shortcuts/>
-      <Extensions/>
+      <Shortcuts />
+      <Extensions />
     </div>
   </div>
 }

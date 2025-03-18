@@ -6,19 +6,13 @@ import Video from "~/components/video/Video";
 import Shortcuts from "~/components/Shortcuts";
 import {open} from "@tauri-apps/plugin-dialog";
 import Extensions from "~/components/extensions/Extensions";
+import ExternalOpenButton from "~/components/ExternalOpenButton";
+import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 
 export default function Local() {
   const navigate = useNavigate();
   const [file, setFile] = createSignal<string>("");
 
-  async function openFilePicker() {
-    const file = await open({
-      multiple: false,
-      directory: false,
-      filters: [{name: "Videos", extensions: ["mp4", "mkv"]}]
-    });
-    setFile(file || "");
-  }
 
   onMount(() => {
     const file = localStorage.getItem("oxide_local");
@@ -26,10 +20,6 @@ export default function Local() {
       setFile(file);
     }
   })
-  createEffect(() => {
-    localStorage.setItem("oxide_last_loc", `/local`);
-    localStorage.setItem("oxide_local", file());
-  });
   return (
     <div class={"min-h-screen flex flex-col justify-center items-center"}>
       <div class={"flex flex-row"}>
@@ -40,23 +30,18 @@ export default function Local() {
         >
           Home <Kbd>h</Kbd>
         </Button>
-        <Button
-          hotkey={"o"}
-          class={"m-4"}
-          onClick={openFilePicker}
-        >
-          Open file <Kbd>o</Kbd>
-        </Button>
+        <ExternalOpenButton />
+        <ExternalOpenYouTubeButton />
       </div>
-      z
+
       <Show when={file()}>
-        <Video file={file()!} id={file()!}/>
+        <Video file={file()!} id={file()!} />
         <p class={"my-8 max-w-[58%]"}>{file()}</p>
       </Show>
-      <div class={"flex flex-col w-full my-4 justify-center items-center"}>
+      <div class={"flex flex-col w-7/12 my-4 justify-center"}>
         <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
-        <Shortcuts/>
-        <Extensions/>
+        <Shortcuts />
+        <Extensions />
       </div>
     </div>
   )
