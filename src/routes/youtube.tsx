@@ -42,10 +42,10 @@ export default function YouTube() {
         <Video youtube={url()!} id={url()!} />
       </Show>
       <Show when={title()}>
-        <p class={"mt-8 mb-2 max-w-[58%]"}>{title()}</p>
+        <p class={"mt-8 mb-2 text-2xl max-w-[58%]"}>{title()}</p>
       </Show>
       <Show when={url()}>
-        <a href={url()} class={"underline max-w-[58%]"}>{url()}</a>
+        <a href={url()} class={"underline max-w-[58%] mb-8"}>{url()}</a>
       </Show>
       <div class={"flex flex-col w-7/12 my-4 justify-center"}>
         <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
