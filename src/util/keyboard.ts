@@ -3,9 +3,7 @@ import {onCleanup, onMount} from "solid-js";
 export function addKeyboardListener(key: string, button: () => (HTMLButtonElement | undefined)) {
 
   function onKeyboardEvent(event: KeyboardEvent) {
-    console.log(event.key);
     if (event.key == key) {
-      console.log(button());
       button?.()?.click()
     }
   }
