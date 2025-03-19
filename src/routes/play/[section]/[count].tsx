@@ -27,13 +27,12 @@ export default function Play() {
   }
   const section = () => parseInt(params.section);
   const count = () => parseInt(params.count);
-  const isFinished = () => finished().includes(`${section()}/${count()}`)
   const episode = createMemo(() => CourseEntries[section()][count()]);
   const previousEpisode = createMemo(() => findPreviousEpisode(section(), count()));
   const nextEpisode = createMemo(() => findNextEpisode(section(), count()));
-  const [inc, setInc] = createSignal(false);
+  const [justFinished, setJustFinished] = createSignal(false);
   const numFinished = () => {
-    return finished().length + (inc() ? 1 : 0)
+    return finished().length + (justFinished() ? 1 : 0)
   }
 
   function markFinished() {
@@ -46,7 +45,7 @@ export default function Play() {
     const values: string[] = JSON.parse(res)
     if (values.indexOf(key) === -1) {
       values.push(key)
-      setInc(true)
+      setJustFinished(true)
     }
     localStorage.setItem("oxide_finished", JSON.stringify(values));
   }
