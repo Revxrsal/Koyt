@@ -10,6 +10,7 @@ import Extensions from "~/components/extensions/Extensions";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 import {createHardwareKeyboardListener} from "~/util/keyboard";
 import {Progress} from "~/components/ui/progress";
+import BsCheck2All from "~/components/BsCheck2All";
 
 export interface PathProps extends Params {
   section: string;
@@ -27,6 +28,7 @@ export default function Play() {
   }
   const section = () => parseInt(params.section);
   const count = () => parseInt(params.count);
+  const isFinished = () => finished().includes(`${section()}/${count()}`);
   const episode = createMemo(() => CourseEntries[section()][count()]);
   const previousEpisode = createMemo(() => findPreviousEpisode(section(), count()));
   const nextEpisode = createMemo(() => findNextEpisode(section(), count()));
@@ -76,7 +78,12 @@ export default function Play() {
       <ExternalOpenButton />
       <ExternalOpenYouTubeButton />
     </div>
-    <h3>{episode().title}</h3>
+    <h3 class={"flex flex-row items-center"}>
+      <Show when={isFinished()}>
+        <BsCheck2All width={24} height={24} class={"me-4"}/>
+      </Show>
+      {episode().title}
+    </h3>
     <p>{CourseSections[episode().section]}</p>
     <Video
       file={episode().path}

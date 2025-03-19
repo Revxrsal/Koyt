@@ -7,7 +7,7 @@ import Shortcuts from "~/components/Shortcuts";
 import Extensions from "~/components/extensions/Extensions";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
-import { getYouTubeTitle } from "~/util/youtube";
+import {getYouTubeTitle} from "~/util/youtube";
 
 export default function YouTube() {
   const navigate = useNavigate();

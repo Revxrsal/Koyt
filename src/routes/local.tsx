@@ -12,8 +12,7 @@ import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 export default function Local() {
   const navigate = useNavigate();
   const [file, setFile] = createSignal<string>("");
-
-
+  
   onMount(() => {
     const file = localStorage.getItem("oxide_local");
     if (file) {

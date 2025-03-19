@@ -1,6 +1,9 @@
 import ShtCt from "~/components/ShtCt";
+import {useLocation} from "@solidjs/router";
+import {Show} from "solid-js";
 
 export default function Shortcuts() {
+  const location = useLocation();
   return (
     <ul class={"w-full flex flex-col"}>
       <ShtCt
@@ -51,6 +54,12 @@ export default function Shortcuts() {
         label={"Rewind 5s (even unfocused)"}
         shortcut={"Ctrl + Shift + Z"}
       />
+      <Show when={location.pathname != "/youtube" && location.pathname != "/local"}>
+          <ShtCt
+            label={"Next episode (even unfocused)"}
+            shortcut={"Ctrl + Shift + W"}
+          />
+      </Show>
     </ul>
   )
 }
