@@ -7,7 +7,7 @@ import {createMemo, createSignal, Show} from "solid-js";
 import {isURL} from "validator";
 import {useLocation, useNavigate} from "@solidjs/router";
 import {addEnterListener} from "~/util/keyboard";
-import {createKeyBind} from "~/components/util/keyboard";
+import {createKeyBind} from "~/util/keyboard";
 
 export default function ExternalOpenYouTubeButton() {
   const [openDialog, setOpenDialog] = createSignal(false)
@@ -63,7 +63,14 @@ export default function ExternalOpenYouTubeButton() {
           </Show>
         </TextFieldRoot>
         <DialogFooter class={"select-none"}>
-          <Button type="submit" disabled={!isValid()} onClick={openYouTube} ref={v => openBtn = v}>Open</Button>
+          <Button
+            type="submit"
+            disabled={!isValid()}
+            onClick={openYouTube}
+            ref={v => openBtn = v}
+          >
+            Open
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

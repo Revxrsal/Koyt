@@ -26,13 +26,9 @@ async setSettings(appSettings: AppSettings) : Promise<null> {
 
 
 export const events = __makeEvents__<{
-globalForwardEvent: GlobalForwardEvent,
-globalRewindEvent: GlobalRewindEvent,
-globalToggleEvent: GlobalToggleEvent
+hardwareHotkeyEvent: HardwareHotkeyEvent
 }>({
-globalForwardEvent: "global-forward-event",
-globalRewindEvent: "global-rewind-event",
-globalToggleEvent: "global-toggle-event"
+hardwareHotkeyEvent: "hardware-hotkey-event"
 })
 
 /** user-defined constants **/
@@ -48,9 +44,8 @@ export type Arch = "ARM" | "X86_32" | "X86_64"
  */
 export type BrowserExtension = { id: string; name: string; version: string; description: string; directory: string; enabled: boolean }
 export type ChromeVersion = { major: number; minor: number; build: number; patch: number }
-export type GlobalForwardEvent = null
-export type GlobalRewindEvent = null
-export type GlobalToggleEvent = null
+export type HardwareHotkeyEvent = { hotkey: OxideHotKey }
+export type OxideHotKey = "Forward" | "Rewind" | "TogglePlay" | "NextVideo" | "PreviousVideo"
 
 /** tauri-specta globals **/
 

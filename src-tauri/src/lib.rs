@@ -8,7 +8,7 @@ use crate::commands::*;
 use crate::extensions::commands::*;
 use tauri_plugin_global_shortcut::{Code, Modifiers, ShortcutState};
 
-use crate::setup::{GlobalRewindEvent, GlobalToggleEvent, GlobalForwardEvent};
+use crate::setup::{HardwareHotkeyEvent, OxideHotKey};
 use tauri_specta::Event;
 use tauri_specta::{collect_commands, collect_events, ErrorHandlingMode};
 
@@ -23,7 +23,7 @@ pub fn run() {
             get_settings,
             set_settings
         ])
-        .events(collect_events![GlobalToggleEvent, GlobalRewindEvent, GlobalForwardEvent])
+        .events(collect_events![HardwareHotkeyEvent])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
@@ -37,18 +37,25 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
-                .with_shortcuts(["ctrl+shift+c", "ctrl+shift+x", "ctrl+shift+z"])
+                .with_shortcuts(["ctrl+shift+c", "ctrl+shift+x", "ctrl+shift+z", "ctrl+shift+w"])
                 .unwrap()
                 .with_handler(|app, shortcut, event| {
                     if event.state == ShortcutState::Pressed {
                         if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyZ) {
-                            GlobalRewindEvent.emit(app).unwrap()
+                            let ev = HardwareHotkeyEvent::new(OxideHotKey::Rewind);
+                            ev.emit(app).unwrap();
                         }
                         if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyC) {
-                            GlobalToggleEvent.emit(app).unwrap()
+                            let ev = HardwareHotkeyEvent::new(OxideHotKey::TogglePlay);
+                            ev.emit(app).unwrap();
                         }
                         if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyX) {
-                            GlobalForwardEvent.emit(app).unwrap()
+                            let ev = HardwareHotkeyEvent::new(OxideHotKey::Forward);
+                            ev.emit(app).unwrap();
+                        }
+                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyW) {
+                            let ev = HardwareHotkeyEvent::new(OxideHotKey::NextVideo);
+                            ev.emit(app).unwrap();
                         }
                     }
                 })

@@ -1,7 +1,7 @@
 import {createPlayer} from "~/player/player";
 import {createSignal, JSXElement, onCleanup, onMount, Show} from "solid-js";
 import {getCurrentWindow} from "@tauri-apps/api/window";
-import {createKeyBind} from "~/components/util/keyboard";
+import {createKeyBind} from "~/util/keyboard";
 import {Portal} from "solid-js/web";
 import {convertFileSrc} from "@tauri-apps/api/core";
 import {events} from "~/gen/bindings";
@@ -13,7 +13,6 @@ export default function Video(props: { file?: string, youtube?: string, id?: str
   const assetUrl = props.youtube ? convertToEmbedUrl(props.youtube) : convertFileSrc(props.file!)
 
   let video: HTMLElement | undefined;
-  let frame: HTMLIFrameElement | undefined;
   const [speed, setSpeed] = createSignal(1.0);
   const [fullScreen, setFullScreen] = createSignal(false);
   const player = createPlayer(() => video!, {
@@ -31,9 +30,7 @@ export default function Video(props: { file?: string, youtube?: string, id?: str
     },
 
   });
-  let unlistenToGlobalToggle: UnlistenFn | null
-  let unlistenToGlobalForward: UnlistenFn | null
-  let unlistenToGlobalRewind: UnlistenFn | null
+  let unlistenToHardware: UnlistenFn | null
   onMount(async () => {
     const wasFullScreen = localStorage.getItem("oxide-was-full-screen")
     if (wasFullScreen === "true") {
@@ -80,23 +77,21 @@ export default function Video(props: { file?: string, youtube?: string, id?: str
         }
       }
     })
-    unlistenToGlobalToggle = await events.globalToggleEvent.listen(() => {
-      player().togglePlay()
-    })
-
-    unlistenToGlobalRewind = await events.globalRewindEvent.listen(() => {
-      player().rewind(5)
-    })
-
-    unlistenToGlobalForward = await events.globalForwardEvent.listen(() => {
-      player().forward(5)
+    unlistenToHardware = await events.hardwareHotkeyEvent.listen(({event, id, payload}) => {
+      switch (payload.hotkey) {
+        case "Forward":
+          player().forward(5)
+          break;
+        case "Rewind":
+          player().rewind(5)
+          break;
+        case "TogglePlay":
+          player().togglePlay()
+          break;
+      }
     })
   })
-  onCleanup(() => {
-    unlistenToGlobalToggle?.()
-    unlistenToGlobalForward?.()
-    unlistenToGlobalRewind?.()
-  })
+  onCleanup(() => unlistenToHardware?.())
   createKeyBind("s", () => {
     player().speed = Math.max(player().speed - 0.1, 0.5);
   })
@@ -116,7 +111,6 @@ export default function Video(props: { file?: string, youtube?: string, id?: str
         <Show when={props.youtube}>
           <div class="plyr__video-embed" id="player" ref={v => video = v}>
             <iframe
-              ref={v => frame = v}
               src={assetUrl}
               allowfullscreen={true}
               allow="autoplay"

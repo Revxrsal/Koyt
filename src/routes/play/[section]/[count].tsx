@@ -8,6 +8,7 @@ import Shortcuts from "~/components/Shortcuts";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
 import Extensions from "~/components/extensions/Extensions";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
+import {createHardwareKeyboardListener} from "~/util/keyboard";
 
 export interface PathProps extends Params {
   section: string;
@@ -27,6 +28,7 @@ export default function Play() {
     window.location.replace(episodeUrl(ep));
   }
 
+  createHardwareKeyboardListener("NextVideo", () => goToEpisode(nextEpisode()!))
   onMount(() => {
     localStorage.setItem("oxide_last_loc", `/play/${section()}/${count()}`);
   });

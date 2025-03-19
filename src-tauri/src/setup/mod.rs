@@ -7,14 +7,29 @@ use tauri::{App, Manager};
 use tauri_specta::Event;
 use tokio::sync::RwLock;
 
-#[derive(Serialize, Deserialize, Debug, Clone, Type, Event)]
-pub struct GlobalToggleEvent;
+#[derive(Serialize, Deserialize, Debug, Clone, Type)]
+pub enum OxideHotKey {
+    Forward,
+    Rewind,
+    TogglePlay,
+    NextVideo,
+    PreviousVideo
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone, Type, Event)]
-pub struct GlobalRewindEvent;
+pub struct HardwareHotkeyEvent {
+    hotkey: OxideHotKey
+}
 
-#[derive(Serialize, Deserialize, Debug, Clone, Type, Event)]
-pub struct GlobalForwardEvent;
+impl HardwareHotkeyEvent {
+    pub fn new(hotkey: OxideHotKey) -> Self {
+        Self { hotkey }
+    }
+
+    pub fn hotkey(&self) -> &OxideHotKey {
+        &self.hotkey
+    }
+}
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let handle = app.handle().clone();
