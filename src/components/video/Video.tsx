@@ -8,7 +8,13 @@ import {events} from "~/gen/bindings";
 import {UnlistenFn} from "@tauri-apps/api/event";
 import {convertToEmbedUrl} from "~/util/youtube";
 
-export default function Video(props: { file?: string, youtube?: string, id?: string, controls?: JSXElement }) {
+export default function Video(props: {
+  file?: string,
+  youtube?: string,
+  id?: string,
+  controls?: JSXElement;
+  onEnd?: () => void
+}) {
   const [controlsContainer, setControlsContainer] = createSignal<Element | null>(null);
   const assetUrl = props.youtube ? convertToEmbedUrl(props.youtube) : convertFileSrc(props.file!)
 
@@ -28,7 +34,6 @@ export default function Video(props: { file?: string, youtube?: string, id?: str
       enabled: true,
       key: "oxide.player"
     },
-
   });
   let unlistenToHardware: UnlistenFn | null
   onMount(async () => {
@@ -55,6 +60,7 @@ export default function Video(props: { file?: string, youtube?: string, id?: str
         setControlsContainer(controlsBar!)
       }
     })
+    player().on("ended", () => props.onEnd?.())
     player().on("ready", () => {
       if (props.id) {
         const lastStoppedAt = localStorage.getItem(`oxide_${props.id}`);

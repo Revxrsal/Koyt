@@ -1,7 +1,7 @@
 import {Params, useNavigate, useParams} from "@solidjs/router";
 import {CourseEntries, CourseSections, Episode} from "~/Course";
 import Video from "~/components/video/Video";
-import {createMemo, onMount, Show} from "solid-js";
+import {createMemo, createSignal, onMount, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
 import Kbd from "~/components/Kbd";
 import Shortcuts from "~/components/Shortcuts";
@@ -9,6 +9,7 @@ import ExternalOpenButton from "~/components/ExternalOpenButton";
 import Extensions from "~/components/extensions/Extensions";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 import {createHardwareKeyboardListener} from "~/util/keyboard";
+import {Progress} from "~/components/ui/progress";
 
 export interface PathProps extends Params {
   section: string;
@@ -18,21 +19,53 @@ export interface PathProps extends Params {
 export default function Play() {
   const navigate = useNavigate();
   const params = useParams<PathProps>();
+  const finished = () => {
+    const res = localStorage.getItem("oxide_finished")
+    if (!res) return [];
+    const values: string[] = JSON.parse(res)
+    return values
+  }
   const section = () => parseInt(params.section);
   const count = () => parseInt(params.count);
+  const isFinished = () => finished().includes(`${section()}/${count()}`)
   const episode = createMemo(() => CourseEntries[section()][count()]);
   const previousEpisode = createMemo(() => findPreviousEpisode(section(), count()));
   const nextEpisode = createMemo(() => findNextEpisode(section(), count()));
+  const [inc, setInc] = createSignal(false);
+  const numFinished = () => {
+    return finished().length + (inc() ? 1 : 0)
+  }
+
+  function markFinished() {
+    const key = `${section()}/${count()}`
+    const res = localStorage.getItem("oxide_finished")
+    if (!res) {
+      localStorage.setItem("oxide_finished", JSON.stringify([key]));
+      return
+    }
+    const values: string[] = JSON.parse(res)
+    if (values.indexOf(key) === -1) {
+      values.push(key)
+      setInc(true)
+    }
+    localStorage.setItem("oxide_finished", JSON.stringify(values));
+  }
 
   function goToEpisode(ep: Episode) {
     window.location.replace(episodeUrl(ep));
   }
 
+  const percentage = () => (numFinished() * 100 / 184)
   createHardwareKeyboardListener("NextVideo", () => goToEpisode(nextEpisode()!))
   onMount(() => {
     localStorage.setItem("oxide_last_loc", `/play/${section()}/${count()}`);
   });
   return <div class={"min-h-screen flex flex-col justify-center items-center"}>
+    <div class={"flex flex-col justify-center items-center w-full"}>
+      <h3 class={"mt-8"}>Progress: {percentage().toFixed(2)}%</h3>
+      <Progress class={"pt-4 px-4 w-7/12"} value={percentage()} />
+      <p class={"mb-8"}>Finished {numFinished()}, {184 - numFinished()} remaining</p>
+    </div>
     <div class={"flex flex-row"}>
       <Button
         class={"m-4"}
@@ -49,6 +82,7 @@ export default function Play() {
     <Video
       file={episode().path}
       id={`${section()}/${count()}`}
+      onEnd={() => markFinished()}
     />
     <div class={"flex flex-row justify-between w-7/12"}>
       <Show when={previousEpisode()} fallback={<div class={"m-4"} />}>
