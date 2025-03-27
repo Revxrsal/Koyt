@@ -3,7 +3,7 @@ use crate::settings::AppSettings;
 use specta::specta;
 use std::ops::Deref;
 use std::sync::Arc;
-use tauri::{command, State};
+use tauri::{command, State, WebviewWindow};
 use tokio::sync::RwLock;
 
 pub type TauriRunningAppState<'a> = State<'a, Arc<RwLock<RunningAppState>>>;
@@ -26,5 +26,13 @@ pub async fn set_settings<'a>(
     drop(current);
 
     RunningAppState::schedule_saving(Arc::clone(state.deref())).await;
+    Ok(())
+}
+
+#[command]
+#[specta]
+pub async fn toggle_fullscreen(window: WebviewWindow) -> Result<(), ()> {
+    let full_screen = window.is_fullscreen().unwrap_or_default();
+    window.set_fullscreen(!full_screen).unwrap();
     Ok(())
 }

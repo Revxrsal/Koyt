@@ -19,6 +19,9 @@ async getSettings() : Promise<AppSettings> {
 },
 async setSettings(appSettings: AppSettings) : Promise<null> {
     return await TAURI_INVOKE("set_settings", { appSettings });
+},
+async toggleFullscreen() : Promise<null> {
+    return await TAURI_INVOKE("toggle_fullscreen");
 }
 }
 

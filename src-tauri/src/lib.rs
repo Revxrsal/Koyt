@@ -21,7 +21,8 @@ pub fn run() {
             remove_extension,
             set_extension_enabled,
             get_settings,
-            set_settings
+            set_settings,
+            toggle_fullscreen
         ])
         .events(collect_events![HardwareHotkeyEvent])
         .error_handling(ErrorHandlingMode::Throw);
