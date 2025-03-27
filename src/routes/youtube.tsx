@@ -8,6 +8,7 @@ import Extensions from "~/components/extensions/Extensions";
 import ExternalOpenButton from "~/components/ExternalOpenButton";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 import {getYouTubeTitle} from "~/util/youtube";
+import {UserOS} from "~/util/os";
 
 export default function YouTube() {
   const navigate = useNavigate();
@@ -34,12 +35,12 @@ export default function YouTube() {
         >
           Home <Kbd>h</Kbd>
         </Button>
-        <ExternalOpenButton />
-        <ExternalOpenYouTubeButton />
+        <ExternalOpenButton/>
+        <ExternalOpenYouTubeButton/>
       </div>
 
       <Show when={url()}>
-        <Video youtube={url()!} id={url()!} />
+        <Video youtube={url()!} id={url()!}/>
       </Show>
       <Show when={title()}>
         <p class={"mt-8 mb-2 text-2xl max-w-[58%]"}>{title()}</p>
@@ -49,8 +50,10 @@ export default function YouTube() {
       </Show>
       <div class={"flex flex-col w-7/12 my-4 justify-center"}>
         <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
-        <Shortcuts />
-        <Extensions />
+        <Shortcuts/>
+        <Show when={UserOS == "Windows"}>
+          <Extensions/>
+        </Show>
       </div>
     </div>
   )

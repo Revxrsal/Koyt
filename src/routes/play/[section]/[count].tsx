@@ -11,6 +11,7 @@ import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 import {createHardwareKeyboardListener} from "~/util/keyboard";
 import {Progress} from "~/components/ui/progress";
 import BsCheck2All from "~/components/BsCheck2All";
+import {UserOS} from "~/util/os";
 
 export interface PathProps extends Params {
   section: string;
@@ -64,7 +65,7 @@ export default function Play() {
   return <div class={"min-h-screen flex flex-col justify-center items-center"}>
     <div class={"flex flex-col justify-center items-center w-full"}>
       <h3 class={"mt-8"}>Progress: {percentage().toFixed(2)}%</h3>
-      <Progress class={"pt-4 px-4 w-7/12"} value={percentage()} />
+      <Progress class={"pt-4 px-4 w-7/12"} value={percentage()}/>
       <p class={"mb-8"}>Finished {numFinished()}, {184 - numFinished()} remaining</p>
     </div>
     <div class={"flex flex-row"}>
@@ -75,8 +76,8 @@ export default function Play() {
       >
         Home <Kbd>h</Kbd>
       </Button>
-      <ExternalOpenButton />
-      <ExternalOpenYouTubeButton />
+      <ExternalOpenButton/>
+      <ExternalOpenYouTubeButton/>
     </div>
     <h3 class={"flex flex-row items-center"}>
       <Show when={isFinished()}>
@@ -91,13 +92,13 @@ export default function Play() {
       onEnd={() => markFinished()}
     />
     <div class={"flex flex-row justify-between w-7/12"}>
-      <Show when={previousEpisode()} fallback={<div class={"m-4"} />}>
+      <Show when={previousEpisode()} fallback={<div class={"m-4"}/>}>
         <Button class={"m-4 py-8"} hotkey={"q"} onClick={() => goToEpisode(previousEpisode()!)}>
           Previous: {previousEpisode()!.title} <Kbd>q</Kbd>
         </Button>
       </Show>
 
-      <Show when={nextEpisode()} fallback={<div class={"m-4"} />}>
+      <Show when={nextEpisode()} fallback={<div class={"m-4"}/>}>
         <Button class={"m-4 py-8"} hotkey={"w"} onClick={() => goToEpisode(nextEpisode()!)}>
           Next: {nextEpisode()!.title} <Kbd>w</Kbd>
         </Button>
@@ -105,8 +106,10 @@ export default function Play() {
     </div>
     <div class={"flex flex-col w-7/12 my-4 justify-center"}>
       <h2 class={"font-bold text-center"}>Keyboard shortcuts</h2>
-      <Shortcuts />
-      <Extensions />
+      <Shortcuts/>
+      <Show when={UserOS == "Windows"}>
+        <Extensions/>
+      </Show>
     </div>
   </div>
 }

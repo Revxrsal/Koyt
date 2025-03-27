@@ -13,12 +13,12 @@ pub enum OxideHotKey {
     Rewind,
     TogglePlay,
     NextVideo,
-    PreviousVideo
+    PreviousVideo,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Type, Event)]
 pub struct HardwareHotkeyEvent {
-    hotkey: OxideHotKey
+    hotkey: OxideHotKey,
 }
 
 impl HardwareHotkeyEvent {

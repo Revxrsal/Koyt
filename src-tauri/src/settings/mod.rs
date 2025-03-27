@@ -1,9 +1,9 @@
 pub mod persist;
 pub mod running_app_state;
 
+use crate::extensions::BrowserExtension;
 use serde::{Deserialize, Serialize};
 use specta::Type;
-use crate::extensions::BrowserExtension;
 
 #[derive(Clone, Serialize, Deserialize, Debug, Type, Default)]
 pub struct AppSettings {
@@ -11,7 +11,6 @@ pub struct AppSettings {
 }
 
 impl AppSettings {
-
     pub fn downloaded_extensions(&self) -> &Vec<BrowserExtension> {
         &self.downloaded_extensions
     }

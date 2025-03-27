@@ -1,6 +1,6 @@
+use crate::settings::AppSettings;
 use std::fs::{create_dir, File};
 use tauri::{AppHandle, Manager};
-use crate::settings::AppSettings;
 
 pub fn save_settings(settings: &AppSettings, handle: &AppHandle) -> std::io::Result<()> {
     if let Ok(app_data_dir) = handle.path().app_data_dir() {

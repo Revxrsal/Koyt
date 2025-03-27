@@ -32,7 +32,7 @@ impl ExtensionManifest {
     pub fn id(&self) -> &str {
         match &self.id {
             Some(id) => id,
-            None => ""
+            None => "",
         }
     }
 }

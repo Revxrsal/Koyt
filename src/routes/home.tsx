@@ -6,7 +6,6 @@ import ExternalOpenButton from "~/components/ExternalOpenButton";
 import ExternalOpenYouTubeButton from "~/components/ExternalYouTubeButton";
 import BsCheck2All from "~/components/BsCheck2All";
 
-
 export default function Home() {
   onMount(() => {
     localStorage.setItem("oxide_last_loc", `/home`);
@@ -23,8 +22,8 @@ export default function Home() {
         Oxide
       </h1>
       <div class={"flex flex-row mb-8"}>
-        <ExternalOpenButton />
-        <ExternalOpenYouTubeButton />
+        <ExternalOpenButton/>
+        <ExternalOpenYouTubeButton/>
       </div>
       <div class={"flex flex-col"}>
         <For each={Object.entries(Course)}>{([title, episodes], index) => (
@@ -46,11 +45,12 @@ function Section(props: {
       <h4 class={"select-none"}>{props.title}</h4>
       <div class={"flex flex-col"}>
         <For each={props.episodes}>{episode => (
-          <ShowEpisode episode={episode} index={props.index} watched={props.watched.includes(`${episode.section}/${episode.count}`)} />
+          <ShowEpisode episode={episode} index={props.index}
+                       watched={props.watched.includes(`${episode.section}/${episode.count}`)}/>
         )}
         </For>
       </div>
-      <hr class={"my-3"} />
+      <hr class={"my-3"}/>
     </div>
   )
 }

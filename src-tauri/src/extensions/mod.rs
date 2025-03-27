@@ -10,12 +10,13 @@ mod macos;
 #[cfg(target_os = "macos")]
 use macos as sys;
 
-pub mod downloader;
 #[cfg(target_os = "linux")]
 mod linux;
+
+pub mod commands;
+pub mod downloader;
 pub mod manifest;
 pub mod version;
-pub mod commands;
 
 #[cfg(target_os = "linux")]
 use linux as sys;

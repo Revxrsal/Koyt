@@ -12,7 +12,12 @@ pub struct ChromeVersion {
 
 impl ChromeVersion {
     pub fn new(major: u16, minor: u16, build: u16, patch: u16) -> Self {
-        Self { major, minor, build, patch }
+        Self {
+            major,
+            minor,
+            build,
+            patch,
+        }
     }
 
     pub fn major(&self) -> u16 {
@@ -34,7 +39,14 @@ impl ChromeVersion {
 
 impl Display for ChromeVersion {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}.{}.{}.{}", self.major(), self.minor(), self.build(), self.patch())
+        write!(
+            f,
+            "{}.{}.{}.{}",
+            self.major(),
+            self.minor(),
+            self.build(),
+            self.patch()
+        )
     }
 }
 

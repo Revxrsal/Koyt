@@ -38,23 +38,28 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
-                .with_shortcuts(["ctrl+shift+c", "ctrl+shift+x", "ctrl+shift+z", "ctrl+shift+w"])
+                .with_shortcuts([
+                    "commandorctrl+shift+c",
+                    "commandorctrl+shift+x",
+                    "commandorctrl+shift+z",
+                    "commandorctrl+shift+w",
+                ])
                 .unwrap()
                 .with_handler(|app, shortcut, event| {
                     if event.state == ShortcutState::Pressed {
-                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyZ) {
+                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyZ) {
                             let ev = HardwareHotkeyEvent::new(OxideHotKey::Rewind);
                             ev.emit(app).unwrap();
                         }
-                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyC) {
+                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyC) {
                             let ev = HardwareHotkeyEvent::new(OxideHotKey::TogglePlay);
                             ev.emit(app).unwrap();
                         }
-                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyX) {
+                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyX) {
                             let ev = HardwareHotkeyEvent::new(OxideHotKey::Forward);
                             ev.emit(app).unwrap();
                         }
-                        if shortcut.matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::KeyW) {
+                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyW) {
                             let ev = HardwareHotkeyEvent::new(OxideHotKey::NextVideo);
                             ev.emit(app).unwrap();
                         }
