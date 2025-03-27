@@ -11,7 +11,7 @@
   },
   "app": {
     "security": {
-      "csp": "default-src *; connect-src *; media-src *; img-src * data:; script-src * 'unsafe-inline'; style-src * 'unsafe-inline';",
+      "csp": "default-src 'self'; img-src *; frame-src *; connect-src ipc: http://ipc.localhost *; media-src stream: http://stream.localhost asset: http://asset.localhost *; script-src * 'unsafe-inline'; style-src * 'unsafe-inline';",
       "assetProtocol": {
         "enable": true,
         "scope": [
