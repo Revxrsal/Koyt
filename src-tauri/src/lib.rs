@@ -1,6 +1,7 @@
 pub mod settings;
 pub mod setup;
 pub mod window;
+pub mod keybind;
 
 use settings::commands::*;
 use std::sync::Arc;

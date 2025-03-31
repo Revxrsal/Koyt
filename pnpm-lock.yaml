@@ -53,6 +53,9 @@ importers:
       plyr:
         specifier: ^3.7.8
         version: 3.7.8
+      remove-accents:
+        specifier: ^0.5.0
+        version: 0.5.0
       solid-icons:
         specifier: ^1.1.0
         version: 1.1.0(solid-js@1.9.5)
@@ -2607,6 +2610,9 @@ packages:
 
   regex@5.1.1:
     resolution: {integrity: sha512-dN5I359AVGPnwzJm2jN1k0W9LPZ+ePvoOeVMMfqIMFz53sSwXkxaJoxr50ptnsC771lK95BnTrVSZxq0b9yCGw==}
+
+  remove-accents@0.5.0:
+    resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
@@ -5695,6 +5701,8 @@ snapshots:
   regex@5.1.1:
     dependencies:
       regex-utilities: 2.3.0
+
+  remove-accents@0.5.0: {}
 
   require-directory@2.1.1: {}
 
