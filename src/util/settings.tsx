@@ -1,8 +1,7 @@
-import {createContext, createEffect, JSXElement, onMount, useContext} from "solid-js";
+import {createContext, createEffect, JSXElement, useContext} from "solid-js";
 import {createStore, SetStoreFunction, unwrap} from "solid-js/store";
 import {AppSettings, commands} from "~/gen/bindings";
 import {trackDeep} from "~/deep";
-import * as events from "node:events";
 
 const SettingsContext = createContext<[AppSettings, SetStoreFunction<AppSettings>]>()
 
@@ -24,7 +23,7 @@ export function createSettingsProvider() {
     setSettings(appSettings)
   })
 
-  createBackendListener(settings, setSettings)
+  createBackendListener(settings)
 
   return {
     SettingsProvider: (props: { children: JSXElement }) => (
@@ -33,10 +32,7 @@ export function createSettingsProvider() {
   }
 }
 
-function createBackendListener(
-  settings: AppSettings,
-  setSettings: SetStoreFunction<AppSettings>
-) {
+function createBackendListener(settings: AppSettings) {
   let first = true;
   let updateFromBackend = false;
   createEffect(async () => {

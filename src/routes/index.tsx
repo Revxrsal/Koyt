@@ -1,17 +1,42 @@
-import {onMount} from "solid-js";
-import {useNavigate} from "@solidjs/router";
+import {Button} from "~/components/ui/button";
+import {createSignal, onMount, Show} from "solid-js";
+
+interface KeyBind {
+  lShift: boolean;
+  rShift: boolean;
+  ctrl: boolean;
+  alt: boolean;
+  command: boolean;
+  tab: boolean;
+  key: string;
+}
+
+function createEmptyKeyBind(): KeyBind {
+  return {alt: false, command: false, ctrl: false, key: "", lShift: false, rShift: false, tab: false}
+}
 
 export default function Index() {
-  const navigate = useNavigate();
+  const [keyBind, setKeyBind] = createSignal(createEmptyKeyBind());
+  const [isRecording, setRecording] = createSignal(false);
+  const [lastKey, setLastKey] = createSignal<KeyboardEvent | null>(null);
   onMount(() => {
-    const savedLocation = localStorage.getItem("oxide_last_loc");
-    if (savedLocation && savedLocation !== location.pathname) {
-      navigate(savedLocation);
-    } else {
-      navigate("/home");
-    }
+    window.addEventListener("keyup", event => {
+      if (isRecording()) {
+        setLastKey(event);
+      }
+    })
   })
   return (
-    <></>
+    <main class={"min-h-screen flex flex-col p-4 justify-center items-center"}>
+      <Show when={lastKey()}>
+        {JSON.stringify(lastKey(), null, 2)}
+      </Show>
+      <h1>
+        Hello
+      </h1>
+      <Button size={"lg"} class={"my-4"} onClick={() => setRecording(v => !v)}>
+        {isRecording() ? <span class={"text-red-800"}>Recording</span> : "Record"}
+      </Button>
+    </main>
   )
 }

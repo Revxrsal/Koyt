@@ -1,30 +1,23 @@
-pub mod commands;
-pub mod extensions;
 pub mod settings;
 pub mod setup;
 pub mod window;
 
-use crate::commands::*;
-use crate::extensions::commands::*;
-use tauri_plugin_global_shortcut::{Code, Modifiers, ShortcutState};
+use settings::commands::*;
+use std::sync::Arc;
+use tauri::State;
 
-use crate::setup::{HardwareHotkeyEvent, OxideHotKey};
-use tauri_specta::Event;
+use crate::settings::running_app_state::RunningAppState;
 use tauri_specta::{collect_commands, collect_events, ErrorHandlingMode};
+use tokio::sync::RwLock;
+
+pub type TauriRunningAppState<'a> = State<'a, Arc<RwLock<RunningAppState>>>;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri_specta::Builder::<tauri::Wry>::new()
         // Then register them (separated by a comma)
-        .commands(collect_commands![
-            download_extension,
-            remove_extension,
-            set_extension_enabled,
-            get_settings,
-            set_settings,
-            toggle_fullscreen
-        ])
-        .events(collect_events![HardwareHotkeyEvent])
+        .commands(collect_commands![get_settings, set_settings,])
+        .events(collect_events![])
         .error_handling(ErrorHandlingMode::Throw);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
@@ -36,37 +29,7 @@ pub fn run() {
         .expect("Failed to export typescript bindings");
 
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_global_shortcut::Builder::new()
-                .with_shortcuts([
-                    "commandorctrl+shift+c",
-                    "commandorctrl+shift+x",
-                    "commandorctrl+shift+z",
-                    "commandorctrl+shift+w",
-                ])
-                .unwrap()
-                .with_handler(|app, shortcut, event| {
-                    if event.state == ShortcutState::Pressed {
-                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyZ) {
-                            let ev = HardwareHotkeyEvent::new(OxideHotKey::Rewind);
-                            ev.emit(app).unwrap();
-                        }
-                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyC) {
-                            let ev = HardwareHotkeyEvent::new(OxideHotKey::TogglePlay);
-                            ev.emit(app).unwrap();
-                        }
-                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyX) {
-                            let ev = HardwareHotkeyEvent::new(OxideHotKey::Forward);
-                            ev.emit(app).unwrap();
-                        }
-                        if shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyW) {
-                            let ev = HardwareHotkeyEvent::new(OxideHotKey::NextVideo);
-                            ev.emit(app).unwrap();
-                        }
-                    }
-                })
-                .build(),
-        )
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())

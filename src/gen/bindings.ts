@@ -5,34 +5,17 @@
 
 
 export const commands = {
-async downloadExtension(url: string, chromeVersion: ChromeVersion, arch: Arch) : Promise<BrowserExtension> {
-    return await TAURI_INVOKE("download_extension", { url, chromeVersion, arch });
-},
-async removeExtension(extensionName: string) : Promise<null> {
-    return await TAURI_INVOKE("remove_extension", { extensionName });
-},
-async setExtensionEnabled(extensionName: string, enabled: boolean) : Promise<null> {
-    return await TAURI_INVOKE("set_extension_enabled", { extensionName, enabled });
-},
 async getSettings() : Promise<AppSettings> {
     return await TAURI_INVOKE("get_settings");
 },
 async setSettings(appSettings: AppSettings) : Promise<null> {
     return await TAURI_INVOKE("set_settings", { appSettings });
-},
-async toggleFullscreen() : Promise<null> {
-    return await TAURI_INVOKE("toggle_fullscreen");
 }
 }
 
 /** user-defined events **/
 
 
-export const events = __makeEvents__<{
-hardwareHotkeyEvent: HardwareHotkeyEvent
-}>({
-hardwareHotkeyEvent: "hardware-hotkey-event"
-})
 
 /** user-defined constants **/
 
@@ -40,15 +23,7 @@ hardwareHotkeyEvent: "hardware-hotkey-event"
 
 /** user-defined types **/
 
-export type AppSettings = { downloaded_extensions: BrowserExtension[] }
-export type Arch = "ARM" | "X86_32" | "X86_64"
-/**
- * A struct that contains basic information about browser extensions
- */
-export type BrowserExtension = { id: string; name: string; version: string; description: string; directory: string; enabled: boolean }
-export type ChromeVersion = { major: number; minor: number; build: number; patch: number }
-export type HardwareHotkeyEvent = { hotkey: OxideHotKey }
-export type OxideHotKey = "Forward" | "Rewind" | "TogglePlay" | "NextVideo" | "PreviousVideo"
+export type AppSettings = Record<string, never>
 
 /** tauri-specta globals **/
 

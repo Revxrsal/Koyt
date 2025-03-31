@@ -6,7 +6,7 @@ pub fn open_main_window(app_handle: &AppHandle) {
     } else {
         let url = tauri::WebviewUrl::default();
         tauri::WebviewWindowBuilder::new(app_handle, "main", url)
-            .title("Oxide | Minimalist video player")
+            .title("Keyboard-operated YouTube")
             .inner_size(1100.0, 600.0)
             .center()
             .browser_extensions_enabled(true)
