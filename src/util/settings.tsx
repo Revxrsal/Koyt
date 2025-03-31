@@ -1,14 +1,14 @@
-import {createContext, createEffect, JSXElement, useContext} from "solid-js";
-import {createStore, SetStoreFunction, unwrap} from "solid-js/store";
-import {AppSettings, commands} from "~/gen/bindings";
-import {trackDeep} from "~/deep";
+import { createContext, createEffect, JSXElement, useContext } from "solid-js";
+import { createStore, SetStoreFunction, unwrap } from "solid-js/store";
+import { AppSettings, commands } from "~/gen/bindings";
+import { trackDeep } from "~/deep";
 
-const SettingsContext = createContext<[AppSettings, SetStoreFunction<AppSettings>]>()
+const SettingsContext = createContext<[AppSettings, SetStoreFunction<AppSettings>]>();
 
 export function createEmptySettings(): AppSettings {
   return {
-    downloaded_extensions: []
-  }
+    downloaded_extensions: [],
+  };
 }
 
 export function useSettings() {
@@ -16,20 +16,20 @@ export function useSettings() {
 }
 
 export function createSettingsProvider() {
-  const [settings, setSettings] = createStore(createEmptySettings())
+  const [settings, setSettings] = createStore(createEmptySettings());
 
   queueMicrotask(async () => {
-    const appSettings = await commands.getSettings()
-    setSettings(appSettings)
-  })
+    const appSettings = await commands.getSettings();
+    setSettings(appSettings);
+  });
 
-  createBackendListener(settings)
+  createBackendListener(settings);
 
   return {
     SettingsProvider: (props: { children: JSXElement }) => (
-      <SettingsContext.Provider value={[settings, setSettings]} children={props.children}/>
-    )
-  }
+      <SettingsContext.Provider value={[settings, setSettings]} children={props.children} />
+    ),
+  };
 }
 
 function createBackendListener(settings: AppSettings) {
@@ -41,9 +41,9 @@ function createBackendListener(settings: AppSettings) {
       /* update wasn't from backend. send the update to the backend */
       if (settings) {
         if (first)
-          first = false
+          first = false;
         else
-          await commands.setSettings(unwrap(settings))
+          await commands.setSettings(unwrap(settings));
       }
     } else {
       /*
@@ -52,5 +52,5 @@ function createBackendListener(settings: AppSettings) {
        */
       updateFromBackend = false;
     }
-  })
+  });
 }

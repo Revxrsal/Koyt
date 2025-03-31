@@ -1,7 +1,7 @@
-import {$PROXY, $TRACK, createMemo, createRoot, createSignal, untrack} from "solid-js";
-import {Store, unwrap} from "solid-js/store";
+import { $PROXY, $TRACK, createMemo, createRoot, createSignal, untrack } from "solid-js";
+import { Store, unwrap } from "solid-js/store";
 
-const EQUALS_FALSE = {equals: false} as const;
+const EQUALS_FALSE = { equals: false } as const;
 
 type StoreNode = Record<typeof $TRACK | string, any>;
 
@@ -94,4 +94,4 @@ function trackStore<T extends object>(store: Store<T>): T {
   return store;
 }
 
-export {trackStore};
+export { trackStore };

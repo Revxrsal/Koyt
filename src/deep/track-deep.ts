@@ -1,5 +1,5 @@
-import {$PROXY} from "solid-js";
-import {Store} from "solid-js/store";
+import { $PROXY } from "solid-js";
+import { Store } from "solid-js/store";
 
 /**
  * Tracks all properties of a {@link store} by iterating over them recursively.
@@ -47,4 +47,4 @@ function traverse<T>(value: Store<T>, seen: Set<unknown>): void {
  */
 const deepTrack = trackDeep;
 
-export {trackDeep, deepTrack};
+export { trackDeep, deepTrack };

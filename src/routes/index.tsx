@@ -1,5 +1,6 @@
-import {Button} from "~/components/ui/button";
-import {createSignal, onMount, Show} from "solid-js";
+import { Button } from "~/components/ui/button";
+import { createSignal, onMount, Show } from "solid-js";
+import { createStore } from "solid-js/store";
 
 interface KeyBind {
   lShift: boolean;
@@ -12,20 +13,21 @@ interface KeyBind {
 }
 
 function createEmptyKeyBind(): KeyBind {
-  return {alt: false, command: false, ctrl: false, key: "", lShift: false, rShift: false, tab: false}
+  return { alt: false, command: false, ctrl: false, key: "", lShift: false, rShift: false, tab: false };
 }
 
 export default function Index() {
-  const [keyBind, setKeyBind] = createSignal(createEmptyKeyBind());
+  const [keyBind, setKeyBind] = createStore(createEmptyKeyBind());
   const [isRecording, setRecording] = createSignal(false);
   const [lastKey, setLastKey] = createSignal<KeyboardEvent | null>(null);
   onMount(() => {
-    window.addEventListener("keyup", event => {
+    document.addEventListener("keydown", event => {
       if (isRecording()) {
+        setKeyBind("alt", event.altKey);
         setLastKey(event);
       }
-    })
-  })
+    });
+  });
   return (
     <main class={"min-h-screen flex flex-col p-4 justify-center items-center"}>
       <Show when={lastKey()}>
@@ -38,5 +40,5 @@ export default function Index() {
         {isRecording() ? <span class={"text-red-800"}>Recording</span> : "Record"}
       </Button>
     </main>
-  )
+  );
 }
