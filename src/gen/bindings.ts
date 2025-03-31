@@ -23,7 +23,10 @@ async setSettings(appSettings: AppSettings) : Promise<null> {
 
 /** user-defined types **/
 
-export type AppSettings = Record<string, never>
+export type AppSettings = { hotkeys: HotKey[] }
+export type HotKey = { keybind: KeyBind; video_action: VideoAction }
+export type KeyBind = { shift: boolean; ctrl: boolean; alt: boolean; meta: boolean; key: string }
+export type VideoAction = "Play" | "Pause" | "Toggle" | { ChangeSpeed: { modifier: number } } | { SetSpeed: { to: number } } | { ChangeVolume: { modifier: number } } | { SetVolume: { to: number } } | { Forward: { by: number } } | { Rewind: { by: number } } | "ToggleFullscreen" | "ToggleSubtitles" | "NextChapter" | "PreviousChapter" | "TakeScreenshot" | "TogglePiP" | "ToggleLoop"
 
 /** tauri-specta globals **/
 

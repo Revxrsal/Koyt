@@ -13,5 +13,4 @@ pub struct AppSettings {
 
 impl AppSettings {
     
-    
 }

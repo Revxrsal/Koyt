@@ -10,22 +10,6 @@ import { SiWindows11 } from "solid-icons/si";
 
 const FUNCTION_KEYS = ["Control", "Alt", "Meta", "Shift"];
 
-interface KeyBind {
-  shift: boolean;
-  ctrl: boolean;
-  alt: boolean;
-  meta: boolean;
-  key: string;
-}
-
-function Kbd(props: ComponentProps<"kbd">) {
-  const [local, rest] = splitProps(props, ["class"]);
-  return <kbd
-    class={cn(
-      "text-xl border-2 p-4 m-2",
-      local.class,
-    )} {...rest} />;
-}
 
 function DisplayKeyBind(props: { keyBind: KeyBind }) {
 
@@ -75,11 +59,7 @@ function DisplayKeyBind(props: { keyBind: KeyBind }) {
   );
 }
 
-function createEmptyKeyBind(): KeyBind {
-  return { alt: false, meta: false, ctrl: false, key: "", shift: false };
-}
 
-const DEBOUNCE_TIME = 1670;
 
 export default function Index() {
   const [keyBind, setKeyBind] = createStore(createEmptyKeyBind());
