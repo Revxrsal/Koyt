@@ -28,6 +28,9 @@ pub fn register_keybind(handle: &AppHandle, target: &HotKey) {
     let plugin = handle.global_shortcut();
     let id = target.id();
     let shortcut = target.keybind().to_tauri_shortcut();
+    if shortcut.is_empty() { 
+        return;
+    }
     plugin
         .on_shortcut(shortcut.as_str(), move |app, _shortcut, event| {
             if matches!(event.state, ShortcutState::Pressed) {
