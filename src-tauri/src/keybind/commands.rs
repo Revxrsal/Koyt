@@ -1,7 +1,7 @@
-use crate::keybind::keybind::KeyBind;
-use crate::keybind::HotKey;
-use tauri::AppHandle;
 use crate::setup::register_keybind;
+use common::hotkey::HotKey;
+use common::keybind::KeyBind;
+use tauri::AppHandle;
 
 #[tauri::command]
 #[specta::specta]

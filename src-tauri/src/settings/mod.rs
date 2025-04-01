@@ -2,7 +2,7 @@ pub mod commands;
 pub mod persist;
 pub mod running_app_state;
 
-use crate::keybind::HotKey;
+use common::hotkey::HotKey;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 

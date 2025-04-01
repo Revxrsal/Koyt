@@ -1,5 +1,5 @@
 use crate::ipc::dispatch_hotkey;
-use crate::keybind::HotKey;
+use common::hotkey::HotKey;
 use crate::settings::running_app_state::RunningAppState;
 use crate::settings::AppSettings;
 use crate::window::open_main_window;
