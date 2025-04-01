@@ -15,7 +15,11 @@ export default function App() {
             <SettingsProvider>
               <ColorModeScript />
               <ColorModeProvider>
-                {props.children}
+                {/*<ContextMenu>*/}
+                  {/*<ContextMenuTrigger>*/}
+                    {props.children}
+                  {/*</ContextMenuTrigger>*/}
+                {/*</ContextMenu>*/}
               </ColorModeProvider>
             </SettingsProvider>
           </Suspense>

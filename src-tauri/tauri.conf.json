@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Oxide",
+  "productName": "Koyt",
   "version": "0.1.0",
-  "identifier": "net.kasasbeh.oxide",
+  "identifier": "net.kasasbeh.koyt",
   "build": {
     "frontendDist": "../.output/public",
     "devUrl": "http://localhost:3000",

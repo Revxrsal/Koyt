@@ -2,21 +2,27 @@ use serde::{Deserialize, Serialize};
 use specta::Type;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
-pub enum VideoAction {
-    Play,
-    Pause,
+pub enum BoolAction {
+    Enable,
+    Disable,
     Toggle,
-    ChangeSpeed { modifier: f32 },
-    SetSpeed { to: f32 },
-    ChangeVolume { modifier: f32 },
-    SetVolume { to: f32 },
-    Forward { by: f32 },
-    Rewind { by: f32 },
-    ToggleFullscreen,
-    ToggleSubtitles,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Type)]
+pub enum VideoAction {
+    Nothing,
+    Playing(BoolAction),
+    Fullscreen(BoolAction),
+    Subtitles(BoolAction),
+    PiP(BoolAction),
+    Loop(BoolAction),
+    ChangeSpeed(f32),
+    SetSpeed(f32),
+    ChangeVolume(f32),
+    SetVolume(f32),
+    Forward(f32),
+    Rewind(f32),
     NextChapter,
     PreviousChapter,
     TakeScreenshot,
-    TogglePiP,
-    ToggleLoop,
 }

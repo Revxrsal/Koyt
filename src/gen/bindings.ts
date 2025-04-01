@@ -10,6 +10,12 @@ async getSettings() : Promise<AppSettings> {
 },
 async setSettings(appSettings: AppSettings) : Promise<null> {
     return await TAURI_INVOKE("set_settings", { appSettings });
+},
+async toTauriGlobalShortcut(keyBind: KeyBind) : Promise<string> {
+    return await TAURI_INVOKE("to_tauri_global_shortcut", { keyBind });
+},
+async registerKeybindToSystem(target: HotKey) : Promise<null> {
+    return await TAURI_INVOKE("register_keybind_to_system", { target });
 }
 }
 
@@ -24,9 +30,10 @@ async setSettings(appSettings: AppSettings) : Promise<null> {
 /** user-defined types **/
 
 export type AppSettings = { hotkeys: HotKey[] }
-export type HotKey = { keybind: KeyBind; video_action: VideoAction }
+export type BoolAction = "Enable" | "Disable" | "Toggle"
+export type HotKey = { id: number; keybind: KeyBind; video_action: VideoAction }
 export type KeyBind = { shift: boolean; ctrl: boolean; alt: boolean; meta: boolean; key: string }
-export type VideoAction = "Play" | "Pause" | "Toggle" | { ChangeSpeed: { modifier: number } } | { SetSpeed: { to: number } } | { ChangeVolume: { modifier: number } } | { SetVolume: { to: number } } | { Forward: { by: number } } | { Rewind: { by: number } } | "ToggleFullscreen" | "ToggleSubtitles" | "NextChapter" | "PreviousChapter" | "TakeScreenshot" | "TogglePiP" | "ToggleLoop"
+export type VideoAction = "Nothing" | { Playing: BoolAction } | { Fullscreen: BoolAction } | { Subtitles: BoolAction } | { PiP: BoolAction } | { Loop: BoolAction } | { ChangeSpeed: number } | { SetSpeed: number } | { ChangeVolume: number } | { SetVolume: number } | { Forward: number } | { Rewind: number } | "NextChapter" | "PreviousChapter" | "TakeScreenshot"
 
 /** tauri-specta globals **/
 

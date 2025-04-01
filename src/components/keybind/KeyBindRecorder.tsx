@@ -1,39 +1,71 @@
-import { createStore } from "solid-js/store";
-import { KeyBind } from "~/gen/bindings";
+import { SetStoreFunction, Store } from "solid-js/store";
+import { HotKey, KeyBind } from "~/gen/bindings";
 import removeAccents from "remove-accents";
-import { onMount } from "solid-js";
+import { createSignal, onCleanup, onMount, Show } from "solid-js";
+import DisplayKeyBind from "~/components/keybind/DisplayKeyBind";
+import { uid } from "~/util/uid";
 
-const FUNCTION_KEYS = ["Control", "Alt", "Meta", "Shift"];
-const DEBOUNCE_TIME = 1670;
+export const FUNCTION_KEYS = ["Control", "Alt", "Meta", "Shift"];
+const DEBOUNCE_TIME = 2000;
 
-function createEmptyKeyBind(): KeyBind {
+export function createEmptyKeyBind(): KeyBind {
   return { alt: false, meta: false, ctrl: false, key: "", shift: false };
 }
 
-export default function KeyBindRecorder(props: {
-  keyBind: KeyBind,
-  setKeyBind: (keyBind: KeyBind) => void,
-}) {
-  const [keyBind, setKeyBind] = createStore(structuredClone(props.keyBind));
+export function createSampleKeyBind(): KeyBind {
+  return { alt: false, meta: false, ctrl: true, key: "C", shift: true };
+}
 
+export function createEmptyHotKey(): HotKey {
+  return { id: uid(), keybind: createEmptyKeyBind(), video_action: { Playing: "Toggle" } };
+}
+
+function DebugDebounce(props: { lastTimestamp: () => number }) {
+  const [debouncing, setDebouncing] = createSignal(0);
+  let interval: any;
+  onMount(() => {
+    interval = setInterval(() => {
+      const now = Date.now(); // Current timestamp in milliseconds
+      const elapsed = Math.min(now - props.lastTimestamp(), DEBOUNCE_TIME);
+      setDebouncing(DEBOUNCE_TIME - elapsed);
+    }, 50);
+  });
+  onCleanup(() => clearInterval(interval));
+  return (
+    <>
+      <Show when={debouncing() > 0} fallback={
+        <p>Composing a new key</p>
+      }>
+        <p>Composing. Keep typing. Wait {(debouncing() / 1000).toFixed(2)}s to reset</p>
+      </Show>
+    </>
+  );
+}
+
+export default function KeyBindRecorder(props: {
+  keyBind: Store<KeyBind>,
+  setKeyBind: SetStoreFunction<KeyBind>,
+}) {
   function updateFromEvent(event: KeyboardEvent) {
     if (event.ctrlKey)
-      setKeyBind("ctrl", true);
+      props.setKeyBind("ctrl", true);
     if (event.altKey)
-      setKeyBind("alt", true);
+      props.setKeyBind("alt", true);
     if (event.shiftKey)
-      setKeyBind("shift", true);
+      props.setKeyBind("shift", true);
     if (event.metaKey)
-      setKeyBind("meta", true);
+      props.setKeyBind("meta", true);
 
     if (!FUNCTION_KEYS.includes(event.key))
-      setKeyBind("key", removeAccents(event.key).toUpperCase());
+      props.setKeyBind("key", removeAccents(event.key).toUpperCase());
   }
 
+  let lastTimestamp = 0;
+
+  let listener: (event: KeyboardEvent) => void;
+
   onMount(() => {
-    let lastTimestamp = 0;
-    document.addEventListener("keydown", event => {
-      console.log(event);
+    listener = (event: KeyboardEvent) => {
       event.preventDefault();
 
       const now = Date.now(); // Current timestamp in milliseconds
@@ -41,14 +73,23 @@ export default function KeyBindRecorder(props: {
       const shouldReset = (now - lastTimestamp >= DEBOUNCE_TIME);
       if (shouldReset) {
         const empty = createEmptyKeyBind();
-        // batch(() => {
-        setKeyBind(empty);
+        props.setKeyBind(empty);
         updateFromEvent(event);
-        // })
       } else {
         updateFromEvent(event);
       }
       lastTimestamp = now;
-    });
+    };
+
+    document.addEventListener("keydown", listener);
   });
+  onCleanup(() => document.removeEventListener("keydown", listener));
+  return (
+    <>
+      <DebugDebounce lastTimestamp={() => lastTimestamp} />
+      <DisplayKeyBind keyBind={props.keyBind} onEmpty={
+        <span class={"text-muted-foreground"}>Recording...</span>
+      } />
+    </>
+  );
 }

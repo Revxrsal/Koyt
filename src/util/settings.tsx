@@ -6,9 +6,7 @@ import { trackDeep } from "~/deep";
 const SettingsContext = createContext<[AppSettings, SetStoreFunction<AppSettings>]>();
 
 export function createEmptySettings(): AppSettings {
-  return {
-    downloaded_extensions: [],
-  };
+  return { hotkeys: [] };
 }
 
 export function useSettings() {

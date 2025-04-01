@@ -8,9 +8,11 @@ use specta::Type;
 
 #[derive(Clone, Serialize, Deserialize, Debug, Type, Default)]
 pub struct AppSettings {
-    pub hotkeys: Vec<HotKey>,
+    hotkeys: Vec<HotKey>,
 }
 
 impl AppSettings {
-    
+    pub fn hotkeys(&self) -> &Vec<HotKey> {
+        &self.hotkeys
+    }
 }

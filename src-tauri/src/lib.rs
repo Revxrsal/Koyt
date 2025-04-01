@@ -1,9 +1,11 @@
+pub mod keybind;
 pub mod settings;
 pub mod setup;
 pub mod window;
-pub mod keybind;
+pub mod ipc;
 
 use settings::commands::*;
+use keybind::commands::*;
 use std::sync::Arc;
 use tauri::State;
 
@@ -14,10 +16,10 @@ use tokio::sync::RwLock;
 pub type TauriRunningAppState<'a> = State<'a, Arc<RwLock<RunningAppState>>>;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub async fn run() {
     let builder = tauri_specta::Builder::<tauri::Wry>::new()
         // Then register them (separated by a comma)
-        .commands(collect_commands![get_settings, set_settings,])
+        .commands(collect_commands![get_settings, set_settings, to_tauri_global_shortcut, register_keybind_to_system])
         .events(collect_events![])
         .error_handling(ErrorHandlingMode::Throw);
 
