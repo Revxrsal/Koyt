@@ -29,7 +29,7 @@ async registerKeybindToSystem(target: HotKey) : Promise<null> {
 
 /** user-defined types **/
 
-export type AppSettings = { hotkeys: HotKey[]; launch_on_startup: boolean }
+export type AppSettings = { hotkeys: HotKey[]; launch_on_startup: boolean; minimize_to_tray_on_close: boolean }
 export type BoolAction = "Enable" | "Disable" | "Toggle"
 export type HotKey = { id: number; keybind: KeyBind; video_action: VideoAction }
 export type KeyBind = { shift: boolean; ctrl: boolean; alt: boolean; meta: boolean; key: string }
