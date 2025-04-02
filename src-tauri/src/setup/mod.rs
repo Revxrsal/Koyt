@@ -5,10 +5,12 @@ use crate::settings::AppSettings;
 use crate::tray::create_tray;
 use crate::window::open_main_window;
 use clap::Parser;
+use common::action::VideoAction;
 use common::hotkey::HotKey;
 use std::sync::Arc;
 use tauri::{App, AppHandle, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
+use tokio::sync::mpsc::Sender;
 use tokio::sync::RwLock;
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
@@ -24,13 +26,17 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
             let _ = autostart_manager.disable();
         }
     }
+    let (sender, receiver) = tokio::sync::mpsc::channel::<VideoAction>(32);
+    {
+        tokio::spawn(async move {
+            start_ipc_server(receiver).await.unwrap();
+        });
+    }
 
-    register_global_shortcuts(&handle, app_state.settings());
+    register_global_shortcuts(&handle, app_state.settings(), sender);
     let app_state = Arc::new(RwLock::new(app_state));
     handle.manage(app_state);
-    tokio::spawn(async move {
-        start_ipc_server().await.unwrap();
-    });
+
     create_tray(&app)?;
 
     let args = Args::parse();
@@ -39,13 +45,17 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn register_global_shortcuts(handle: &AppHandle, settings: &AppSettings) {
+fn register_global_shortcuts(
+    handle: &AppHandle,
+    settings: &AppSettings,
+    sender: Sender<VideoAction>,
+) {
     for x in settings.hotkeys() {
-        register_keybind(handle, x);
+        register_keybind(handle, x, sender.clone());
     }
 }
 
-pub fn register_keybind(handle: &AppHandle, target: &HotKey) {
+pub fn register_keybind(handle: &AppHandle, target: &HotKey, sender: Sender<VideoAction>) {
     let plugin = handle.global_shortcut();
     let id = target.id();
     let shortcut = target.keybind().to_tauri_shortcut();
@@ -54,6 +64,7 @@ pub fn register_keybind(handle: &AppHandle, target: &HotKey) {
     }
     plugin
         .on_shortcut(shortcut.as_str(), move |app, _shortcut, event| {
+            let sender = sender.clone();
             if matches!(event.state, ShortcutState::Pressed) {
                 let app = app.clone();
                 tokio::spawn(async move {
@@ -61,7 +72,10 @@ pub fn register_keybind(handle: &AppHandle, target: &HotKey) {
                     let running_app_state = state.read().await;
                     for hotkey in running_app_state.settings().hotkeys() {
                         if hotkey.id() == id {
-                            dispatch_hotkey(&hotkey).await;
+                            let action = hotkey.video_action().clone();
+                            if let Err(err) = sender.send(action).await {
+                                println!("error sending hotkey via channel: {}", err);
+                            }
                         }
                     }
                 });
