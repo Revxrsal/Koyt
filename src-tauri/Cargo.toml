@@ -45,6 +45,7 @@ tauri-plugin-autostart = "2.3.0"
 tauri-plugin-global-shortcut = "2.2.0"
 tauri-plugin-single-instance = "2.2.3"
 tauri-plugin-window-state = "2.2.2"
+postcard = { version = "1.1.1", features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.26.0"

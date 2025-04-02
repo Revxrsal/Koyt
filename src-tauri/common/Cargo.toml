@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.203", features = ["derive"] }
-specta = "=2.0.0-rc.22"
-tauri-specta = { version = "=2.0.0-rc.21", features = ["derive"] }
-specta-typescript = { version = "0.0.9" }
+specta = { version = "=2.0.0-rc.22", features = ["derive"] }
 rand = "0.9.0"
+interprocess = "2.2.3"
+anyhow = "1.0.97"
