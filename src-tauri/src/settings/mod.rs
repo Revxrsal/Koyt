@@ -10,6 +10,7 @@ use specta::Type;
 pub struct AppSettings {
     hotkeys: Vec<HotKey>,
     launch_on_startup: bool,
+    minimize_to_tray_on_close: bool,
 }
 
 impl AppSettings {
@@ -19,5 +20,9 @@ impl AppSettings {
 
     pub fn launch_on_startup(&self) -> bool {
         self.launch_on_startup
+    }
+
+    pub fn minimize_to_tray_on_close(&self) -> bool {
+        self.minimize_to_tray_on_close
     }
 }
