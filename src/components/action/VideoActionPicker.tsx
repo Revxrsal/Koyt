@@ -107,7 +107,7 @@ export default function VideoActionPicker(props: {
         <Match when={"Forward" in (hotKey.video_action as VideoActionWithData)}>
           <ForwardField hotkey={hotKey} />
         </Match>
-        <Match when={"SetVolume" in (hotKey.video_action as VideoActionWithData)}>
+        <Match when={"Rewind" in (hotKey.video_action as VideoActionWithData)}>
           <RewindField hotkey={hotKey} />
         </Match>
       </Switch>
