@@ -20,6 +20,16 @@ pub async fn set_settings<'a>(
     state: TauriRunningAppState<'a>,
 ) -> Result<(), ()> {
     let mut current = state.write().await;
+    #[cfg(not(debug_assertions))]
+    if current.settings().launch_on_startup() != app_settings.launch_on_startup() {
+        use tauri_plugin_autostart::ManagerExt;
+        let autostart_manager = current.app_handle().autolaunch();
+        if app_settings.launch_on_startup() {
+            let _ = autostart_manager.enable();
+        } else {
+            let _ = autostart_manager.disable();
+        }
+    }
     *current.settings_mut() = app_settings;
     drop(current);
 

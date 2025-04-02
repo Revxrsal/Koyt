@@ -1,8 +1,8 @@
+use crate::action::VideoAction;
+use crate::keybind::KeyBind;
 use rand::random;
 use serde::{Deserialize, Serialize};
 use specta::Type;
-use crate::action::VideoAction;
-use crate::keybind::KeyBind;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
 pub struct HotKey {
