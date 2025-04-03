@@ -1,8 +1,8 @@
-use std::ops::Deref;
 use crate::ipc::listener::ActionHandle;
 use crate::setup::register_keybind;
 use common::hotkey::HotKey;
 use common::keybind::KeyBind;
+use std::ops::Deref;
 use tauri::{AppHandle, State};
 
 #[tauri::command]

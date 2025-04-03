@@ -7,6 +7,7 @@ pub mod tray;
 pub mod window;
 pub mod runtime;
 pub mod platform;
+pub mod chrome;
 
 use keybind::commands::*;
 use settings::commands::*;
@@ -28,7 +29,7 @@ pub async fn run() {
             get_settings,
             set_settings,
             to_tauri_global_shortcut,
-            register_keybind_to_system
+            register_keybind_to_system,
         ])
         .events(collect_events![])
         .error_handling(ErrorHandlingMode::Throw);

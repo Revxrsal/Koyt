@@ -33,6 +33,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         });
     }
 
+    crate::chrome::register_host_to_chrome_apps(&handle);
     register_global_shortcuts(&handle, app_state.settings(), action_handle);
     let app_state = Arc::new(RwLock::new(app_state));
     handle.manage(app_state);

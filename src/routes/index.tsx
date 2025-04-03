@@ -19,7 +19,7 @@ async function reload(oldKeyBind: KeyBind, newKeyBind: KeyBind, hotkey: HotKey) 
   }
   const shortcut = await commands.toTauriGlobalShortcut(newKeyBind);
   if (shortcut) {
-    await commands.registerKeybindToSystem(hotkey)
+    await commands.registerKeybindToSystem(hotkey);
   }
 }
 
