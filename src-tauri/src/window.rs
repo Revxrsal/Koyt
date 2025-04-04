@@ -1,6 +1,6 @@
 use tauri::{AppHandle, Manager};
 
-pub fn open_main_window(app_handle: &AppHandle, minimized: bool) {
+pub fn open_main_window(app_handle: &AppHandle) {
     #[cfg(target_os = "macos")]
     crate::platform::macos::set_dock_visible(true);
     let window = if let Some(window) = app_handle.get_webview_window("main") {
@@ -18,8 +18,6 @@ pub fn open_main_window(app_handle: &AppHandle, minimized: bool) {
             .build()
             .unwrap()
     };
-    if !minimized {
-        window.show().unwrap();
-        window.set_focus().unwrap();
-    }
+    window.show().unwrap();
+    window.set_focus().unwrap();
 }

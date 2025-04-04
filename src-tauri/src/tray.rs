@@ -15,7 +15,7 @@ pub fn create_tray(app: &App) -> Result<(), Box<dyn Error>> {
             TrayIconEvent::Click { button, .. } | TrayIconEvent::DoubleClick { button, .. } => {
                 if matches!(button, MouseButton::Left) { 
                     let app = tray.app_handle();
-                    open_main_window(app, false);
+                    open_main_window(app);
                 }
             }
             _ => {}

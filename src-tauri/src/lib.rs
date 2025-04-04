@@ -52,7 +52,7 @@ pub async fn run() {
 
     let app = app
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            open_main_window(app, false);
+            open_main_window(app);
         }))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::new().build())

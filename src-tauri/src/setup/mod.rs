@@ -41,7 +41,9 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     create_tray(&app)?;
 
     let args = Args::parse();
-    open_main_window(app.app_handle(), args.minimized);
+    if !args.minimized {
+        open_main_window(app.app_handle());
+    }
 
     Ok(())
 }
