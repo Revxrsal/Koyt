@@ -63,7 +63,7 @@ export default function KeyBindDialog(props: {
     <Dialog open={props.show} onOpenChange={props.setShow}>
       <DialogTrigger
         as={(triggerProps: DialogTriggerProps) =>
-          <Button size={"lg"} class={cn("my-4", props.class)} {...triggerProps}>
+          <Button size={"lg"} class={props.class} {...triggerProps}>
             Change hotkey
           </Button>
         } />

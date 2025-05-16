@@ -3,5 +3,41 @@
 
 #[tokio::main]
 async fn main() {
+    #[cfg(not(debug_assertions))]
+    std::panic::set_hook(Box::new(|info| {
+        log::error!("Panicked: {:?}", info);
+        native_dialog::MessageDialog::new()
+            .set_type(native_dialog::MessageType::Error)
+            .set_title("Failed to start Koyt")
+            .set_text(&format!("Error: {:#?}", info))
+            .show_alert()
+            .unwrap();
+        open_log_file();
+    }));
     app_lib::run().await;
+}
+
+#[cfg(not(debug_assertions))]
+fn open_log_file() {
+    use common::{APP_NAME, IDENTIFIER};
+    #[cfg(target_os = "macos")]
+    let path = dirs_next::home_dir()
+        .ok_or(tauri::Error::UnknownPath)
+        .map(|dir| dir
+            .join("Library/Logs")
+            .join(IDENTIFIER)
+            .join(format!("{}.log", APP_NAME))
+        );
+
+    #[cfg(not(target_os = "macos"))]
+    let path = dirs_next::data_local_dir()
+        .ok_or(tauri::Error::UnknownPath)
+        .map(|dir| dir
+            .join(IDENTIFIER)
+            .join("logs")
+            .join(format!("{}.log", APP_NAME))
+        );
+    if let Ok(path) = path {
+        opener::reveal(path).unwrap();
+    }
 }

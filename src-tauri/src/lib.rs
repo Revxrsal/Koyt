@@ -12,6 +12,7 @@ pub mod chrome;
 use keybind::commands::*;
 use settings::commands::*;
 use std::sync::Arc;
+use log::LevelFilter;
 use tauri::State;
 
 use crate::settings::running_app_state::RunningAppState;
@@ -54,19 +55,15 @@ pub async fn run() {
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             open_main_window(app);
         }))
+        .plugin(tauri_plugin_log::Builder::default().level(
+            LevelFilter::Debug
+        ).build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(builder.invoke_handler())
         .setup(move |app| {
-            if cfg!(debug_assertions) {
-                app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
-                )?;
-            }
             builder.mount_events(app);
             setup::setup(app)
         });

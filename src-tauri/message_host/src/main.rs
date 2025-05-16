@@ -7,7 +7,6 @@ use common::ipc::ipc_address;
 use common::message::Message;
 use interprocess::local_socket::tokio::Stream as LocalSocketStream;
 use interprocess::local_socket::traits::tokio::Stream;
-use std::os::windows::io::AsRawHandle;
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, BufReader};
 use tokio::select;
@@ -35,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
     //     use winapi::um::winbase::STD_OUTPUT_HANDLE;
     //     SetStdHandle(STD_OUTPUT_HANDLE, log_file.as_raw_handle() as *mut _);
     // }
-    let mut reader: Option<BufReader<LocalSocketStream>> = None; // No connection at startup
+    let mut reader: Option<BufReader<LocalSocketStream>> = None;
     loop {
         select! {
             message = read_message_from_stdin() => {

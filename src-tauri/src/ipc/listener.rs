@@ -1,16 +1,18 @@
 use crate::ipc::client::Client;
-use common::action::VideoAction;
 use common::ipc::ipc_address;
+use common::message::Message;
 use interprocess::local_socket::tokio::Listener as LocalSocketListener;
 use interprocess::local_socket::traits::tokio::Listener;
 use interprocess::local_socket::ListenerOptions;
 use std::io;
+use std::time::Duration;
 use tokio::sync::broadcast::{Receiver, Sender};
+use tokio::time::interval;
 
 pub struct IpcServer {
     listener: LocalSocketListener,
-    sender: Sender<VideoAction>,
-    receiver: Receiver<VideoAction>,
+    sender: Sender<Message>,
+    receiver: Receiver<Message>,
 }
 
 impl IpcServer {
@@ -48,7 +50,6 @@ impl IpcServer {
 
     pub async fn start(self) {
         loop {
-            // Sort out situations when establishing an incoming connection caused an error.
             let conn = match self.listener.accept().await {
                 Ok(c) => c,
                 Err(e) => {
@@ -56,16 +57,23 @@ impl IpcServer {
                     continue;
                 }
             };
-            let rx = self.receiver.resubscribe();
-            let client = Client::new(conn, rx);
-            // Spawn new parallel asynchronous tasks onto the Tokio runtime and hand the connection
-            // over to them so that multiple clients could be processed simultaneously in a
-            // lightweight fashion.
+            let keep_alive = self.sender.clone();
             tokio::spawn(async move {
-                // The outer match processes errors that happen when we're connecting to something.
-                // The inner if-let processes errors that happen during the connection.
+                let mut interval = interval(Duration::from_secs(5));
+                loop {
+                    if let Err(why) = keep_alive.send(Message::KeepAlive) {
+                        eprintln!("failed to send keep alive messages to the extension: {why}");
+                        return;
+                    }
+                    interval.tick().await;
+                }
+            });
+            let rx = self.receiver.resubscribe();
+
+            let client = Client::new(conn, rx);
+            tokio::spawn(async move {
                 if let Err(e) = client.handle().await {
-                    eprintln!("Error while handling connection: {e}");
+                    eprintln!("error while handling connection: {e}");
                 }
             });
         }
@@ -80,11 +88,11 @@ impl IpcServer {
 
 #[derive(Debug, Clone)]
 pub struct ActionHandle {
-    sender: Sender<VideoAction>,
+    sender: Sender<Message>,
 }
 
 impl ActionHandle {
-    pub fn sender(&self) -> &Sender<VideoAction> {
+    pub fn sender(&self) -> &Sender<Message> {
         &self.sender
     }
 }

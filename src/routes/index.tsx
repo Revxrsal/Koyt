@@ -40,8 +40,8 @@ function DisplayHotKey(props: {
   }
 
   return (
-    <div class={"flex flex-row justify-start items-center w-full place-items-center"}>
-      <Button size={"icon"} class={"me-8 min-w-9"} onClick={async () => {
+    <div class={"grid grid-cols-8 gap-4 w-full align-middle my-2 place-items-stretch justify-between"}>
+      <Button size={"icon"} class={"align-middle place-content-center my-auto"} onClick={async () => {
         deleteHotKey();
         await unregister(await commands.toTauriGlobalShortcut(props.hotkey.keybind));
       }}>
@@ -78,13 +78,6 @@ export default function Index() {
       }}>
         Define new key
       </Button>
-      {/*<ContextMenuContent>*/}
-      {/*  <ContextMenuItem onClick={() => console.log("hi")}>Profile</ContextMenuItem>*/}
-      {/*  <ContextMenuItem>Billing</ContextMenuItem>*/}
-      {/*  <ContextMenuItem>Team</ContextMenuItem>*/}
-      {/*  <ContextMenuItem>Subscription</ContextMenuItem>*/}
-      {/*</ContextMenuContent>*/}
-      <CommandMenu />
     </main>
   );
 }

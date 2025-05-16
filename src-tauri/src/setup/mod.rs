@@ -6,6 +6,7 @@ use crate::tray::create_tray;
 use crate::window::open_main_window;
 use clap::Parser;
 use common::hotkey::HotKey;
+use common::message::Message;
 use std::sync::Arc;
 use tauri::{App, AppHandle, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
@@ -72,7 +73,8 @@ pub fn register_keybind(handle: &AppHandle, target: &HotKey, action_dispatcher: 
                     for hotkey in running_app_state.settings().hotkeys() {
                         if hotkey.id() == id {
                             let action = hotkey.video_action().clone();
-                            if let Err(err) = dispatcher.sender().send(action) {
+                            let message = Message::ExecuteAction { action };
+                            if let Err(err) = dispatcher.sender().send(message) {
                                 println!("error sending hotkey via channel: {}", err);
                             }
                         }

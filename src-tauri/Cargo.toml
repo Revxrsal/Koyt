@@ -39,14 +39,19 @@ tauri-plugin-fs = "2.2.1"
 tokio = { version = "1.44.1", features = ["full"] }
 interprocess = { version = "2.2.3", features = ["tokio"] }
 anyhow = "1.0.97"
-
+opener = { version = "0.7.2", features = ["reveal"] }
+dirs-next = "2.0.0"
 tauri-plugin-log = "2.3.1"
 tauri-plugin-autostart = "2.3.0"
 tauri-plugin-global-shortcut = "2.2.0"
 tauri-plugin-single-instance = "2.2.3"
 tauri-plugin-window-state = "2.2.2"
 postcard = { version = "1.1.1", features = ["alloc"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
 winreg = "0.55.0"
+native-dialog = { version = "0.7.0", features = ["windows_dpi_awareness", "windows_visual_styles"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.26.0"
+native-dialog = { version = "0.7.0" }

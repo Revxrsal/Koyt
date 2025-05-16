@@ -4,9 +4,16 @@ use std::env::current_exe;
 use std::fs::read_dir;
 use std::path::PathBuf;
 
+/// The native Chrome app ID
 pub(crate) const NATIVE_APP_ID: &'static str = "net.kasasbeh.koyt";
+
+/// The Chrome extension ID (for auto-installing the extension)
 pub(crate) const EXTENSION_ID: &'static str = "phgfelfegpojplnieiojbnefdeoafgog";
+
+/// The name of the host file
 pub(crate) const HOST_FILE_NAME: &'static str = "NativeChromeHost.json";
+
+/// The executable message host
 pub(crate) const HOST_EXECUTABLE: &'static str = "message_host";
 
 #[cfg(target_os = "macos")]
