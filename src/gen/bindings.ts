@@ -16,6 +16,9 @@ async toTauriGlobalShortcut(keyBind: KeyBind) : Promise<string> {
 },
 async registerKeybindToSystem(target: HotKey) : Promise<null> {
     return await TAURI_INVOKE("register_keybind_to_system", { target });
+},
+async openUrl(url: string) : Promise<null> {
+    return await TAURI_INVOKE("open_url", { url });
 }
 }
 

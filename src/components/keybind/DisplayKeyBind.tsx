@@ -39,7 +39,7 @@ export default function DisplayKeyBind(props: { keyBind: KeyBind, onEmpty?: JSXE
   };
 
   return (
-    <div class={cn("flex flex-row items-center justify-center", props.class)}>
+    <div class={cn("flex flex-row items-center", props.class)}>
       <Show when={props.onEmpty && components().length == 0}>
         {props.onEmpty}
       </Show>
@@ -47,7 +47,7 @@ export default function DisplayKeyBind(props: { keyBind: KeyBind, onEmpty?: JSXE
         (
           <>
             <Show when={i() != 0}>
-              <span class={"select-none"}>{" + "}</span>
+              <span class={"select-none mx-4"}>{" + "}</span>
             </Show>
             {keystroke({})}
           </>

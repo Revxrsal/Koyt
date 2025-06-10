@@ -2,9 +2,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { DialogTriggerProps } from "@kobalte/core/dialog";
 import { Button } from "~/components/ui/button";
 import KeyBindRecorder from "~/components/keybind/KeyBindRecorder";
-import { KeyBind, VideoAction } from "~/gen/bindings";
+import { KeyBind } from "~/gen/bindings";
 import { createStore, unwrap } from "solid-js/store";
-import { cn } from "~/libs/cn";
 
 function KeyBindDialogContent(props: {
   keyBind: KeyBind,
@@ -64,7 +63,7 @@ export default function KeyBindDialog(props: {
       <DialogTrigger
         as={(triggerProps: DialogTriggerProps) =>
           <Button size={"lg"} class={props.class} {...triggerProps}>
-            Change hotkey
+            Change
           </Button>
         } />
       <KeyBindDialogContent

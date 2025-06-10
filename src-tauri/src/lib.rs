@@ -31,6 +31,7 @@ pub async fn run() {
             set_settings,
             to_tauri_global_shortcut,
             register_keybind_to_system,
+            open_url
         ])
         .events(collect_events![])
         .error_handling(ErrorHandlingMode::Throw);

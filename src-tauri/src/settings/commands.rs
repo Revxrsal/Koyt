@@ -36,3 +36,10 @@ pub async fn set_settings<'a>(
     RunningAppState::schedule_saving(Arc::clone(state.deref())).await;
     Ok(())
 }
+
+#[command]
+#[specta]
+pub async fn open_url(url: String) -> Result<(), ()> {
+    opener::open_browser(url).unwrap();
+    Ok(())
+}

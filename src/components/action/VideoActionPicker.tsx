@@ -15,17 +15,19 @@ import SetVolumeField from "~/components/action/fields/SetVolumeField";
 import ChangeVolumeField from "~/components/action/fields/ChangeVolumeField";
 import ForwardField from "~/components/action/fields/ForwardField";
 import RewindField from "~/components/action/fields/RewindField";
+import { cn } from "~/libs/cn";
 
 export type VideoActionWithData = Exclude<VideoAction, string>
 
 export default function VideoActionPicker(props: {
   hotkey: Store<HotKey>,
+  class?: string
 }) {
   const [hotKey, setHotKey] = createStore(props.hotkey);
   return <>
     <Select
       required={true}
-      class={"min-w-44"}
+      class={cn("min-w-44", props.class)}
       value={fromVideoAction(hotKey.video_action)}
       onChange={(e) => {
         if (e) {
@@ -44,9 +46,9 @@ export default function VideoActionPicker(props: {
       </SelectTrigger>
       <SelectContent />
     </Select>
-    <div class={"mx-8"} />
-    <Show when={videoActionTakesData(hotKey.video_action)} fallback={<div class={"min-w-64"} />}>
+    <Show when={videoActionTakesData(hotKey.video_action)}>
       <Switch>
+
         <Match when={"Playing" in (hotKey.video_action as VideoActionWithData)}>
           <BoolActionField
             value={(hotKey.video_action as Playing).Playing}
@@ -55,6 +57,7 @@ export default function VideoActionPicker(props: {
             }}
           />
         </Match>
+
         <Match when={"Fullscreen" in (hotKey.video_action as VideoActionWithData)}>
           <BoolActionField
             value={(hotKey.video_action as Fullscreen).Fullscreen}
@@ -72,6 +75,7 @@ export default function VideoActionPicker(props: {
             }}
           />
         </Match>
+
         <Match when={"Loop" in (hotKey.video_action as VideoActionWithData)}>
           <BoolActionField
             value={(hotKey.video_action as Loop).Loop}
@@ -93,6 +97,7 @@ export default function VideoActionPicker(props: {
         <Match when={"ChangeSpeed" in (hotKey.video_action as VideoActionWithData)}>
           <ChangeSpeedField hotkey={hotKey} />
         </Match>
+
         <Match when={"SetSpeed" in (hotKey.video_action as VideoActionWithData)}>
           <SetSpeedField hotkey={hotKey} />
         </Match>
@@ -120,5 +125,3 @@ type PiP = Extract<VideoAction, { PiP: BoolAction }>
 type Loop = Extract<VideoAction, { Loop: BoolAction }>
 type Fullscreen = Extract<VideoAction, { Fullscreen: BoolAction }>
 type Subtitles = Extract<VideoAction, { Subtitles: BoolAction }>
-
-
