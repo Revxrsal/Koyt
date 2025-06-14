@@ -22,6 +22,9 @@ pub(crate) mod macos;
 #[cfg(target_os = "windows")]
 pub(crate) mod windows;
 
+#[cfg(target_os = "linux")]
+pub(crate) mod linux;
+
 fn get_message_host_file() -> Option<PathBuf> {
     let exe = current_exe().unwrap();
     let dir = exe.parent().unwrap();

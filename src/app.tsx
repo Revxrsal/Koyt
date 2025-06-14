@@ -6,7 +6,7 @@ import { ColorModeProvider, ColorModeScript } from "@kobalte/core";
 import { createSettingsProvider } from "~/util/settings";
 import { addPreferencesEffect } from "~/util/preferences";
 
-function C(props: { children: JSXElement }) {
+function AppWrapper(props: { children: JSXElement }) {
   addPreferencesEffect();
   return props.children;
 }
@@ -21,7 +21,7 @@ export default function App() {
             <SettingsProvider>
               <ColorModeScript />
               <ColorModeProvider>
-                <C>{props.children}</C>
+                <AppWrapper>{props.children}</AppWrapper>
               </ColorModeProvider>
             </SettingsProvider>
           </Suspense>

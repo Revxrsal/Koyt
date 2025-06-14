@@ -13,8 +13,6 @@ const toHumanString: Record<string, SelectableVideoAction> = {
   SetVolume: "Set Volume",
   Forward: "Forward",
   Rewind: "Rewind",
-  NextChapter: "Next Chapter",
-  PreviousChapter: "Previous Chapter",
   TakeScreenshot: "Take Screenshot",
 };
 
@@ -23,8 +21,6 @@ const fromHumanString: Record<SelectableVideoAction, VideoAction> = {
   "Change Speed": { ChangeSpeed: 1 },
   "Change Volume": { ChangeVolume: 1 },
   "Full screen": { Fullscreen: "Toggle" },
-  "Next Chapter": "NextChapter",
-  "Previous Chapter": "PreviousChapter",
   "Play in picture (PiP)": { PiP: "Toggle" },
   "Set Speed": { SetSpeed: 1 },
   "Set Volume": { SetVolume: 1 },
@@ -49,8 +45,6 @@ export type SelectableVideoAction =
   "Set Volume" |
   "Forward" |
   "Rewind" |
-  "Next Chapter" |
-  "Previous Chapter" |
   "Take Screenshot";
 
 export const VideoActions = Object.values(toHumanString);

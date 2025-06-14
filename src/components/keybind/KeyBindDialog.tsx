@@ -1,18 +1,23 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { DialogTriggerProps } from "@kobalte/core/dialog";
 import { Button } from "~/components/ui/button";
-import KeyBindRecorder from "~/components/keybind/KeyBindRecorder";
 import { KeyBind } from "~/gen/bindings";
 import { createStore, unwrap } from "solid-js/store";
+import { createKeyBindRecorder } from "~/components/keybind/KeyBindRecorder";
+import { Show } from "solid-js";
 
 function KeyBindDialogContent(props: {
   keyBind: KeyBind,
   setKeyBind: (keyBind: KeyBind) => void,
   show: boolean,
+  onCancel: () => void,
   setShow: (show: boolean) => void,
   reload: (oldKeyBind: KeyBind, newKeyBind: KeyBind) => void,
+  id: number
 }) {
   const [keyBind, setKeyBind] = createStore(structuredClone(unwrap(props.keyBind)));
+  const { KeyBindRecorder, isUnique } = createKeyBindRecorder(keyBind, setKeyBind, props.id);
+
   return (
     <DialogContent>
       <DialogHeader>
@@ -20,14 +25,18 @@ function KeyBindDialogContent(props: {
           Change key bind
         </DialogTitle>
 
-        <KeyBindRecorder
-          keyBind={keyBind}
-          setKeyBind={setKeyBind}
-        />
-
+        <KeyBindRecorder />
+        <Show when={!isUnique()}>
+          <p class={"text-red-400"}>
+            Duplicate key
+          </p>
+        </Show>
         <DialogFooter class={"select-none"}>
           <Button
-            onClick={() => props.setShow(false)}
+            onClick={() => {
+              props.setShow(false);
+              props.onCancel();
+            }}
             variant={"outline"}
           >
             Cancel
@@ -41,6 +50,7 @@ function KeyBindDialogContent(props: {
               const newKeyBind = structuredClone(unwrap(keyBind));
               props.reload(oldKeyBind, newKeyBind);
             }}
+            disabled={!isUnique()}
           >
             Change
           </Button>
@@ -57,6 +67,7 @@ export default function KeyBindDialog(props: {
   show: boolean,
   setShow: (show: boolean) => void,
   reload: (oldKeyBind: KeyBind, newKeyBind: KeyBind) => void,
+  id: number
 }) {
   return (
     <Dialog open={props.show} onOpenChange={props.setShow}>
@@ -67,10 +78,14 @@ export default function KeyBindDialog(props: {
           </Button>
         } />
       <KeyBindDialogContent
+        id={props.id}
         keyBind={props.keyBind}
         setKeyBind={props.setKeyBind}
         show={props.show}
         setShow={props.setShow}
+        onCancel={() => {
+
+        }}
         reload={props.reload}
       />
     </Dialog>

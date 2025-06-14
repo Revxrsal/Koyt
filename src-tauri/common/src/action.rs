@@ -22,7 +22,5 @@ pub enum VideoAction {
     SetVolume(f32),
     Forward(f32),
     Rewind(f32),
-    NextChapter,
-    PreviousChapter,
     TakeScreenshot,
 }

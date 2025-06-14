@@ -1,9 +1,11 @@
-import { SetStoreFunction, Store } from "solid-js/store";
+import { SetStoreFunction, Store, unwrap } from "solid-js/store";
 import { HotKey, KeyBind } from "~/gen/bindings";
 import removeAccents from "remove-accents";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import DisplayKeyBind from "~/components/keybind/DisplayKeyBind";
 import { uid } from "~/util/uid";
+import isEqual from "lodash-es/isEqual";
+import { useSettings } from "~/util/settings";
 
 export const FUNCTION_KEYS = ["Control", "Alt", "Meta", "Shift"];
 const DEBOUNCE_TIME = 2000;
@@ -42,22 +44,41 @@ function DebugDebounce(props: { lastTimestamp: () => number }) {
   );
 }
 
-export default function KeyBindRecorder(props: {
+export function createKeyBindRecorder(
   keyBind: Store<KeyBind>,
   setKeyBind: SetStoreFunction<KeyBind>,
-}) {
+  id: number,
+) {
+  const [settings] = useSettings();
+
+  const [isUnique, setUnique] = createSignal(false);
+  const checkUniqueness = () => {
+    for (const hotkey of settings.hotkeys) {
+      if (hotkey.id == id) {
+        continue;
+      }
+      if (isEqual(unwrap(hotkey.keybind), unwrap(keyBind))) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   function updateFromEvent(event: KeyboardEvent) {
     if (event.ctrlKey)
-      props.setKeyBind("ctrl", true);
+      setKeyBind("ctrl", true);
     if (event.altKey)
-      props.setKeyBind("alt", true);
+      setKeyBind("alt", true);
     if (event.shiftKey)
-      props.setKeyBind("shift", true);
+      setKeyBind("shift", true);
     if (event.metaKey)
-      props.setKeyBind("meta", true);
+      setKeyBind("meta", true);
 
     if (!FUNCTION_KEYS.includes(event.key))
-      props.setKeyBind("key", removeAccents(event.key).toUpperCase());
+      setKeyBind("key", removeAccents(event.key).toUpperCase());
+    const unique = checkUniqueness();
+    setUnique(unique);
+    console.log("Is unique:", unique);
   }
 
   let lastTimestamp = 0;
@@ -73,7 +94,7 @@ export default function KeyBindRecorder(props: {
       const shouldReset = (now - lastTimestamp >= DEBOUNCE_TIME);
       if (shouldReset) {
         const empty = createEmptyKeyBind();
-        props.setKeyBind(empty);
+        setKeyBind(empty);
         updateFromEvent(event);
       } else {
         updateFromEvent(event);
@@ -85,11 +106,15 @@ export default function KeyBindRecorder(props: {
   });
   onCleanup(() => document.removeEventListener("keydown", listener));
   return (
-    <>
-      <DebugDebounce lastTimestamp={() => lastTimestamp} />
-      <DisplayKeyBind keyBind={props.keyBind} onEmpty={
-        <span class={"text-muted-foreground"}>Recording...</span>
-      } />
-    </>
+    {
+      isUnique,
+      KeyBindRecorder: () =>
+        <>
+          <DebugDebounce lastTimestamp={() => lastTimestamp} />
+          <DisplayKeyBind keyBind={keyBind} onEmpty={
+            <span class={"text-muted-foreground"}>Recording...</span>
+          } />
+        </>,
+    }
   );
 }

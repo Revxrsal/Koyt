@@ -120,6 +120,8 @@ function DisplayHotKey(props: {
         <h3>Hot Key</h3>
         <DisplayKeyBind keyBind={props.hotkey.keybind} onEmpty={"No keybind set"} />
         <KeyBindDialog
+          id={props.hotkey.id}
+          class={`hotkey-${props.hotkey.id}`}
           show={showKbDialog()}
           setShow={setShowKbDialog}
           keyBind={props.hotkey.keybind}
@@ -146,6 +148,12 @@ export default function Index() {
   async function defineHotKey() {
     const newHotkey = createEmptyHotKey();
     setSettings("hotkeys", v => [...v, newHotkey]);
+    setTimeout(() => {
+      const hotkeyButton = document.getElementsByClassName(`hotkey-${newHotkey.id}`);
+      if (hotkeyButton && hotkeyButton[0]) {
+        (hotkeyButton[0] as HTMLButtonElement).click();
+      }
+    }, 50)
   }
 
   return (

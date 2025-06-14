@@ -36,7 +36,7 @@ export type AppSettings = { hotkeys: HotKey[]; launch_on_startup: boolean; minim
 export type BoolAction = "Enable" | "Disable" | "Toggle"
 export type HotKey = { id: number; keybind: KeyBind; video_action: VideoAction }
 export type KeyBind = { shift: boolean; ctrl: boolean; alt: boolean; meta: boolean; key: string }
-export type VideoAction = "Nothing" | { Playing: BoolAction } | { Fullscreen: BoolAction } | { Subtitles: BoolAction } | { PiP: BoolAction } | { Loop: BoolAction } | { ChangeSpeed: number } | { SetSpeed: number } | { ChangeVolume: number } | { SetVolume: number } | { Forward: number } | { Rewind: number } | "NextChapter" | "PreviousChapter" | "TakeScreenshot"
+export type VideoAction = "Nothing" | { Playing: BoolAction } | { Fullscreen: BoolAction } | { Subtitles: BoolAction } | { PiP: BoolAction } | { Loop: BoolAction } | { ChangeSpeed: number } | { SetSpeed: number } | { ChangeVolume: number } | { SetVolume: number } | { Forward: number } | { Rewind: number } | "TakeScreenshot"
 
 /** tauri-specta globals **/
 
