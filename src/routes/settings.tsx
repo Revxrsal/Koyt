@@ -6,8 +6,6 @@ import { VsHome } from "solid-icons/vs";
 import { useNavigate } from "@solidjs/router";
 import Main from "~/components/layout/Main";
 import { createDarkThemeQuery } from "~/hooks/createDarkThemeQuery";
-import { getSystemFonts } from "~/font/SystemFonts";
-import { createEffect, createResource } from "solid-js";
 import {
   Select,
   SelectContent,
@@ -16,12 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { createFontsResource } from "~/hooks/createFontsResource";
 
 export default function Settings() {
   const [settings, setSettings] = useSettings();
   const navigate = useNavigate();
   const isSystemDarkTheme = createDarkThemeQuery();
-  const [systemFonts] = createResource(getSystemFonts, { initialValue: [] });
+  const [systemFonts] = createFontsResource();
   return (
     <Main>
       <div>
