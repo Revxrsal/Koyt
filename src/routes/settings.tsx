@@ -7,7 +7,7 @@ import { useNavigate } from "@solidjs/router";
 import Main from "~/components/layout/Main";
 import { createDarkThemeQuery } from "~/hooks/createDarkThemeQuery";
 import { getSystemFonts } from "~/font/SystemFonts";
-import { createResource } from "solid-js";
+import { createEffect, createResource } from "solid-js";
 import {
   Select,
   SelectContent,
@@ -50,7 +50,7 @@ export default function Settings() {
           </SwitchLabel>
         </Switch>
 
-        <label for="fonts">Fonts</label>
+        <label class={"my-2"} for="fonts">Font</label>
         <Select
           // @ts-ignore
           onKeyDown={event => {

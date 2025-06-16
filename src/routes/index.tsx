@@ -7,12 +7,13 @@ import { Button } from "~/components/ui/button";
 import { createKeyBindDialog } from "~/components/keybind/KeyBindModal";
 import DisplayKeyBind from "~/components/keybind/DisplayKeyBind";
 import { createConfirmationDialog } from "~/hooks/createConfirmationDialog";
-import { VsExtensions, VsSettings } from "solid-icons/vs";
+import { VsSettings } from "solid-icons/vs";
 import { useNavigate } from "@solidjs/router";
 import VideoActionPicker from "~/components/action/VideoActionPicker";
 import { AiTwotoneDelete } from "solid-icons/ai";
 import { openChromeExtension } from "~/util/links";
 import { createHotKeyCreator, createKeyBindController } from "~/hooks/createKeyBindController";
+import { IoExtensionPuzzleOutline } from "solid-icons/io";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function Index() {
           <p class={"ms-4"}>Settings</p>
         </Button>
         <Button onClick={openChromeExtension}>
-          <VsExtensions size={20} />
+          <IoExtensionPuzzleOutline size={20} />
           <p class={"ms-4"}>Get Chrome Extension</p>
         </Button>
       </div>
