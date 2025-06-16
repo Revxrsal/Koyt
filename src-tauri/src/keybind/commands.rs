@@ -17,8 +17,7 @@ pub async fn register_keybind_to_system<'a>(
     target: HotKey,
     handle: AppHandle,
     dispatcher: State<'a, ActionHandle>,
-) -> Result<(), ()> {
+) -> Result<(), String> {
     let sender = dispatcher.deref().clone();
-    register_keybind(&handle, &target, sender);
-    Ok(())
+    register_keybind(&handle, &target, sender).map_err(|err| err.to_string())
 }

@@ -5,20 +5,45 @@
 
 
 export const commands = {
-async getSettings() : Promise<AppSettings> {
-    return await TAURI_INVOKE("get_settings");
+async getSettings() : Promise<Result<AppSettings, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_settings") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
-async setSettings(appSettings: AppSettings) : Promise<null> {
-    return await TAURI_INVOKE("set_settings", { appSettings });
+async setSettings(appSettings: AppSettings) : Promise<Result<null, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_settings", { appSettings }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
-async toTauriGlobalShortcut(keyBind: KeyBind) : Promise<string> {
-    return await TAURI_INVOKE("to_tauri_global_shortcut", { keyBind });
+async toTauriGlobalShortcut(keyBind: KeyBind) : Promise<Result<string, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("to_tauri_global_shortcut", { keyBind }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
-async registerKeybindToSystem(target: HotKey) : Promise<null> {
-    return await TAURI_INVOKE("register_keybind_to_system", { target });
+async registerKeybindToSystem(target: HotKey) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("register_keybind_to_system", { target }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
-async openUrl(url: string) : Promise<null> {
-    return await TAURI_INVOKE("open_url", { url });
+async openUrl(url: string) : Promise<Result<null, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_url", { url }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 

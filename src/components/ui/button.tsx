@@ -6,7 +6,6 @@ import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 import type { ValidComponent } from "solid-js";
 import { splitProps } from "solid-js";
-import { createKeyBind } from "~/util/keyboard";
 
 export const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-[color,background-color,box-shadow] focus-visible:outline-none focus-visible:ring-[1.5px] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
@@ -41,22 +40,16 @@ export const buttonVariants = cva(
 type buttonProps<T extends ValidComponent = "button"> = ButtonRootProps<T> &
   VariantProps<typeof buttonVariants> & {
   class?: string;
-  hotkey?: string;
 };
 
 export const Button = <T extends ValidComponent = "button">(
   props: PolymorphicProps<T, buttonProps<T>>,
 ) => {
-  let buttonRef: HTMLButtonElement | null;
   const [local, rest] = splitProps(props as buttonProps, [
     "class",
     "variant",
     "size",
-    "hotkey",
   ]);
-  if (local.hotkey) {
-    createKeyBind(local.hotkey, () => buttonRef?.click());
-  }
   return (
     <ButtonPrimitive
       class={cn(
@@ -66,7 +59,6 @@ export const Button = <T extends ValidComponent = "button">(
         }),
         local.class,
       )}
-      ref={v => buttonRef = v}
       {...rest}
     />
   );

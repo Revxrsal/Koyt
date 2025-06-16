@@ -4,13 +4,15 @@ import { useSettings } from "~/util/settings";
 import { Button } from "~/components/ui/button";
 import { VsHome } from "solid-icons/vs";
 import { useNavigate } from "@solidjs/router";
+import Main from "~/components/layout/Main";
+import { createDarkThemeQuery } from "~/hooks/createDarkThemeQuery";
 
 export default function Settings() {
   const [settings, setSettings] = useSettings();
   const navigate = useNavigate();
-  const isSystemDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isSystemDarkTheme = createDarkThemeQuery();
   return (
-    <main class={`min-h-screen flex flex-col p-4`}>
+    <Main>
       <div>
         <Button onClick={() => navigate("/")}>
           <VsHome size={23} />
@@ -23,7 +25,7 @@ export default function Settings() {
       <div class={"flex flex-col"}>
         <h2 class={"mb-4 font-bold"}>Appearance</h2>
         <Switch
-          checked={(preferences.theme === "dark") || (preferences.theme === "system" && isSystemDarkTheme)}
+          checked={(preferences.theme === "dark") || (preferences.theme === "system" && isSystemDarkTheme())}
           onChange={v => setPreferences("theme", v ? "dark" : "light")}
           class={"flex items-center mb-8"}
         >
@@ -83,8 +85,7 @@ export default function Settings() {
             Minimize to tray when closed
           </SwitchLabel>
         </Switch>
-
       </div>
-    </main>
+    </Main>
   );
 }

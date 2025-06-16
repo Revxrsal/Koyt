@@ -34,7 +34,7 @@ pub async fn run() {
             open_url
         ])
         .events(collect_events![])
-        .error_handling(ErrorHandlingMode::Throw);
+        .error_handling(ErrorHandlingMode::Result);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
     builder

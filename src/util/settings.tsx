@@ -18,7 +18,8 @@ export function createSettingsProvider() {
 
   queueMicrotask(async () => {
     const appSettings = await commands.getSettings();
-    setSettings(appSettings);
+    if (appSettings.status === "ok")
+      setSettings(appSettings.data);
   });
 
   createBackendListener(settings);
