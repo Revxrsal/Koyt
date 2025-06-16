@@ -3,7 +3,7 @@ use interprocess::local_socket::{
 };
 
 pub fn ipc_address<'s>() -> anyhow::Result<Name<'s>> {
-    let name = "koyt.sock";
+    let name = "kbyoutube.sock";
     let print_name = if GenericNamespaced::is_supported() {
         name.to_ns_name::<GenericNamespaced>()?
     } else {

@@ -5,7 +5,7 @@ use opener::open;
 pub fn launch_app() {
     #[cfg(target_os = "windows")]
     {
-        let app_file = absolute(Path::new("Koyt")).unwrap();
+        let app_file = absolute(Path::new("KbYouTube")).unwrap();
         if let Err(why) = open(&app_file) {
             // println!("Failed to open app: {:?}", why);
         }
@@ -13,7 +13,7 @@ pub fn launch_app() {
     #[cfg(target_os = "macos")]
     {
         let home_dir = dirs_next::home_dir().unwrap();
-        let app_file = home_dir.join("Applications").join("Koyt.app");
+        let app_file = home_dir.join("Applications").join("KbYouTube.app");
         open(&app_file).unwrap();
     }
 }

@@ -3,9 +3,9 @@ members = ["common"]
 exclude = ["message_host"]
 
 [package]
-name = "Koyt"
+name = "KbYouTube"
 version = "0.1.0"
-description = "A Tauri App"
+description = "A lightweight application for controlling YouTube via global hotkeys"
 authors = ["you"]
 license = ""
 repository = ""

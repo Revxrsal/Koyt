@@ -15,7 +15,7 @@ function createDefaultPreferences(): Preferences {
 }
 
 function loadPreferences(): Preferences {
-  const prefs = localStorage.getItem("koyt.preferences");
+  const prefs = localStorage.getItem("kbyoutube.preferences");
   if (prefs === null)
     return createDefaultPreferences();
   return JSON.parse(prefs);
@@ -25,7 +25,7 @@ export function addPreferencesEffect() {
   const value = useColorMode();
   createEffect(() => {
     trackDeep(preferences);
-    localStorage.setItem("koyt.preferences", JSON.stringify(unwrap(preferences)));
+    localStorage.setItem("kbyoutube.preferences", JSON.stringify(unwrap(preferences)));
     value.setColorMode(preferences.theme);
 
     if (preferences.appFont)

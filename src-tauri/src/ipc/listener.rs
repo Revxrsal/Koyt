@@ -18,7 +18,7 @@ pub struct IpcServer {
 impl IpcServer {
     pub fn create() -> anyhow::Result<Self> {
         let (tx, rx) = tokio::sync::broadcast::channel(32);
-        let name = "koyt.sock";
+        let name = "kbyoutube.sock";
         let address = ipc_address()?;
         let opts = ListenerOptions::new().name(address);
         let server = match opts.create_tokio() {

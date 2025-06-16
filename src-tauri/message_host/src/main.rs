@@ -27,13 +27,6 @@ async fn handle_message_from_app(message: &Message) -> anyhow::Result<()> {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // use std::fs::File;
-    // let log_file = File::create(r#"S:\Rust\Koyt\__output__.log"#)?;
-    // unsafe {
-    //     use winapi::um::processenv::SetStdHandle;
-    //     use winapi::um::winbase::STD_OUTPUT_HANDLE;
-    //     SetStdHandle(STD_OUTPUT_HANDLE, log_file.as_raw_handle() as *mut _);
-    // }
     let mut reader: Option<BufReader<LocalSocketStream>> = None;
     loop {
         select! {

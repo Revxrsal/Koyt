@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Koyt",
+  "productName": "Keyboard-Operated YouTube",
   "version": "0.1.0",
-  "identifier": "net.kasasbeh.koyt",
+  "identifier": "com.kbyoutube",
   "build": {
     "frontendDist": "../.output/public",
     "devUrl": "http://localhost:3000",

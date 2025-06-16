@@ -8,7 +8,7 @@ async fn main() {
         log::error!("Panicked: {:?}", info);
         native_dialog::MessageDialog::new()
             .set_type(native_dialog::MessageType::Error)
-            .set_title("Failed to start Koyt")
+            .set_title("Failed to start KeyBoard-Operated YouTube")
             .set_text(&format!("Error: {:#?}", info))
             .show_alert()
             .unwrap();
