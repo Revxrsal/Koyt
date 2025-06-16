@@ -7,11 +7,11 @@ export const [preferences, setPreferences] = createStore<Preferences>(loadPrefer
 
 export interface Preferences {
   theme: "dark" | "light" | "system";
-  monoFont: boolean;
+  appFont: string | null;
 }
 
 function createDefaultPreferences(): Preferences {
-  return { theme: "system", monoFont: false };
+  return { theme: "system", appFont: null };
 }
 
 function loadPreferences(): Preferences {
@@ -28,9 +28,9 @@ export function addPreferencesEffect() {
     localStorage.setItem("koyt.preferences", JSON.stringify(unwrap(preferences)));
     value.setColorMode(preferences.theme);
 
-    if (preferences.monoFont)
-      document.getElementsByTagName("html")[0].style.fontFamily = "'JetBrains Mono', monospace";
+    if (preferences.appFont)
+      document.getElementsByTagName("html")[0].style.fontFamily = `'${preferences.appFont}', fallback, sans-serif`;
     else
-      document.getElementsByTagName("html")[0].style.fontFamily = "'Readex Pro', serif";
+      document.getElementsByTagName("html")[0].style.fontFamily = "system-ui";
   });
 }

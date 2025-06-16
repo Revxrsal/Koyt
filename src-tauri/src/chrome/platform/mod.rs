@@ -8,7 +8,10 @@ use std::path::PathBuf;
 pub(crate) const NATIVE_APP_ID: &'static str = "net.kasasbeh.koyt";
 
 /// The Chrome extension ID (for auto-installing the extension)
+#[cfg(debug_assertions)]
 pub(crate) const EXTENSION_ID: &'static str = "phgfelfegpojplnieiojbnefdeoafgog";
+#[cfg(not(debug_assertions))]
+pub(crate) const EXTENSION_ID: &'static str = "hdffofcnfjaehdacnbhccnhnomaihcok";
 
 /// The name of the host file
 pub(crate) const HOST_FILE_NAME: &'static str = "NativeChromeHost.json";

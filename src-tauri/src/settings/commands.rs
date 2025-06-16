@@ -1,6 +1,8 @@
 use crate::settings::running_app_state::RunningAppState;
 use crate::settings::AppSettings;
 use crate::TauriRunningAppState;
+use clap::builder::Str;
+use font_kit::source::SystemSource;
 use specta::specta;
 use std::ops::Deref;
 use std::sync::Arc;
@@ -39,7 +41,13 @@ pub async fn set_settings<'a>(
 
 #[command]
 #[specta]
-pub async fn open_url(url: String) -> Result<(), ()> {
-    opener::open_browser(url).unwrap();
-    Ok(())
+pub async fn open_url(url: String) -> Result<(), String> {
+    opener::open_browser(url).map_err(|e| e.to_string())
+}
+
+#[command]
+#[specta]
+pub async fn get_system_fonts() -> Result<Vec<String>, String> {
+    let source = SystemSource::new();
+    source.all_families().map_err(|e| e.to_string())
 }
