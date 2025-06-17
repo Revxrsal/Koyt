@@ -15,16 +15,23 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { createFontsResource } from "~/hooks/createFontsResource";
-import { onMount } from "solid-js";
-import { appLocalDataDir } from "@tauri-apps/api/path";
+import { onMount, Show } from "solid-js";
+import { AiFillCrown } from "solid-icons/ai";
+import { createLicenseHandler } from "~/hooks/createLicenseHandler";
+import { popHistory } from "~/util/links";
 
 export default function Settings() {
+
   const [settings, setSettings] = useSettings();
   const navigate = useNavigate();
   const isSystemDarkTheme = createDarkThemeQuery();
   const [systemFonts] = createFontsResource();
+  const { deactivateLicense } = createLicenseHandler();
   onMount(async () => {
-    console.log(await appLocalDataDir());
+    if (!preferences.license) {
+      navigate("/");
+      popHistory();
+    }
   });
   return (
     <Main>
@@ -86,20 +93,6 @@ export default function Settings() {
           </SelectTrigger>
           <SelectContent class="max-h-[250px] w-[250px] overflow-auto" />
         </Select>
-        {/*<Switch*/}
-        {/*  checked={preferences.monoFont}*/}
-        {/*  onChange={v => setPreferences("monoFont", v)}*/}
-        {/*  class={"flex items-center"}*/}
-        {/*>*/}
-        {/*  <SwitchControl class={"ms-4"}>*/}
-        {/*    <SwitchThumb />*/}
-        {/*  </SwitchControl>*/}
-        {/*  <SwitchLabel*/}
-        {/*    class="text-lg ms-4 font-medium leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70"*/}
-        {/*  >*/}
-        {/*    Monospaced font*/}
-        {/*  </SwitchLabel>*/}
-        {/*</Switch>*/}
 
         <h2 class={"mt-8 font-bold"}>App</h2>
 
@@ -132,6 +125,27 @@ export default function Settings() {
             Minimize to tray when closed
           </SwitchLabel>
         </Switch>
+
+        <h2 class={"mb-4 font-bold"}>License</h2>
+        <div class={"flex flex-row items-center"}>
+          <p class={"capitalize text-xl"}>
+            <strong>Type: </strong> {preferences.license}
+          </p>
+          <Show when={preferences.license === "paid"}>
+            <AiFillCrown class={"mx-2"} size={24} />
+          </Show>
+        </div>
+
+        <Show when={preferences.license === "paid"} fallback={
+          <Button class={"w-fit my-4"} onClick={() => navigate("/inputLicense")}>
+            Activate a license
+          </Button>
+        }>
+          <Button class={"w-fit my-4"} onClick={deactivateLicense}>
+            Deactivate license
+          </Button>
+        </Show>
+
       </div>
     </Main>
   );
