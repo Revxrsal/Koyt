@@ -1,7 +1,17 @@
 import { render } from "solid-js/web";
-import { Dialog, DialogContent, DialogHeader } from "~/components/ui/dialog";
 import { createSignal } from "solid-js";
 import { preferences } from "~/util/preferences";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogClose,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "~/components/ui/alert-dialog";
+import { openBuyPage } from "~/hooks/createLicenseHandler";
+
+export const MAX_FREE_HOTKEYS = 1;
 
 const paywall = createNewPaywall();
 
@@ -23,10 +33,22 @@ function createNewPaywall() {
 
 function PaywallDialog(props: { open: boolean, setOpen: (open: boolean) => void }) {
   return (
-    <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogContent>
-        <DialogHeader>Hi</DialogHeader>
-      </DialogContent>
-    </Dialog>
+    <AlertDialog open={props.open} onOpenChange={props.setOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <h3>
+            Pls pay
+          </h3>
+        </AlertDialogHeader>
+        <AlertDialogFooter class={"flex"}>
+          <AlertDialogClose>
+            Cancel
+          </AlertDialogClose>
+          <AlertDialogAction onClick={openBuyPage}>
+            That sounds exciting
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

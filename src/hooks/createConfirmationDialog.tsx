@@ -50,14 +50,12 @@ export function createConfirmationDialog(
             </p>
           </div>
           <AlertDialogFooter class={"flex"}>
-            <AlertDialogFooter>
               <AlertDialogClose>
                 Cancel
               </AlertDialogClose>
               <AlertDialogAction onClick={confirm}>
                 Continue
               </AlertDialogAction>
-            </AlertDialogFooter>
             {/*<Button*/}
             {/*  onClick={() => setShow(false)}*/}
             {/*  variant={"outline"}*/}

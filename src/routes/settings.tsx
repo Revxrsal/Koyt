@@ -15,10 +15,27 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { createFontsResource } from "~/hooks/createFontsResource";
-import { onMount, Show } from "solid-js";
+import { createResource, onMount, Show } from "solid-js";
 import { AiFillCrown } from "solid-icons/ai";
 import { createLicenseHandler } from "~/hooks/createLicenseHandler";
 import { popHistory } from "~/util/links";
+import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
+import { appDataDir, appLocalDataDir } from "@tauri-apps/api/path";
+import { commands } from "~/gen/bindings";
+import { showErrorToast } from "~/util/toaster";
+
+function RevealableFilePath(props: { path: string }) {
+  async function reveal() {
+    const res = await commands.revealFile(props.path);
+    if (res.status === "error") {
+      showErrorToast("Error!", `Failed to reveal path: ${res.error}`);
+    }
+  }
+
+  return (
+    <span class={"underline cursor-pointer"} role={"link"} onClick={reveal}>{props.path}</span>
+  );
+}
 
 export default function Settings() {
 
@@ -27,6 +44,13 @@ export default function Settings() {
   const isSystemDarkTheme = createDarkThemeQuery();
   const [systemFonts] = createFontsResource();
   const { deactivateLicense } = createLicenseHandler();
+
+  const [appVersion] = createResource(getVersion);
+  const [tauriVersion] = createResource(getTauriVersion);
+  const [appData] = createResource(async () => (await appDataDir()).replaceAll("\\", "/"));
+  const [localAppData] = createResource(async () => (await appLocalDataDir()).replaceAll("\\", "/"));
+
+
   onMount(async () => {
     if (!preferences.license) {
       navigate("/");
@@ -145,6 +169,22 @@ export default function Settings() {
             Deactivate license
           </Button>
         </Show>
+
+
+        <h2 class={"mt-4 font-bold"}>Debug info</h2>
+        <p class={"text-xl my-2"}>
+          <strong>App version: </strong> {appVersion()}
+        </p>
+        <p class={"text-xl my-2"}>
+          <strong>Tauri version: </strong> {tauriVersion()}
+        </p>
+        <p class={"text-xl my-2"}>
+          <strong>App data directory: </strong> <RevealableFilePath path={appData() || ""}/>
+        </p>
+
+        <p class={"text-xl my-2"}>
+          <strong>Local app data directory: </strong> <RevealableFilePath path={localAppData() || ""}/>
+        </p>
 
       </div>
     </Main>

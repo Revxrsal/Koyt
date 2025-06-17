@@ -10,6 +10,12 @@ pub async fn open_url(url: String) -> Result<(), String> {
 
 #[command]
 #[specta]
+pub async fn reveal_file(path: String) -> Result<(), String> {
+    opener::reveal(path).map_err(|e| e.to_string())
+}
+
+#[command]
+#[specta]
 pub async fn get_system_fonts() -> Result<Vec<String>, String> {
     let source = SystemSource::new();
     source.all_families().map_err(|e| e.to_string())

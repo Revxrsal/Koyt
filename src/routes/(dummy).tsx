@@ -1,25 +1,22 @@
 import { useNavigate } from "@solidjs/router";
-import { onMount } from "solid-js";
+import { createResource, onMount } from "solid-js";
 import Main from "~/components/layout/Main";
 import { commands } from "~/gen/bindings";
 import { preferences } from "~/util/preferences";
 import { showErrorToast } from "~/util/toaster";
+import { Puff } from "solid-spinner";
 
-// const [puffColor] = createResource(async () => {
-//   const root = document.documentElement;
-//   const computedStyle = getComputedStyle(root);
-//   const foreground = computedStyle.getPropertyValue("--primary-foreground").trim();
-//   return `hsl(${foreground})`;
-// }, { initialValue: "hsl(0,0%,87%)" });
-//
-// function createBars() {
-//   const width = window.innerWidth / 25;
-//   return {
-//     LoadingBars: () => (
-//       <Grid color={puffColor()} width={width} height={width} />
-//     ),
-//   };
-// }
+const [foregroundColor] = createResource(async () => {
+  const root = document.documentElement;
+  const computedStyle = getComputedStyle(root);
+  const foreground = computedStyle.getPropertyValue("--primary-foreground").trim();
+  return `hsl(${foreground})`;
+}, { initialValue: "hsl(0,0%,87%)" });
+
+function LoadingIndicator() {
+  const width = window.innerWidth / 25;
+  return <Puff color={foregroundColor()} width={width} height={width} />;
+}
 
 export default function Index() {
   const navigate = useNavigate();
@@ -48,6 +45,7 @@ export default function Index() {
   });
   return (
     <Main class={"justify-center items-center"}>
+      <LoadingIndicator />
     </Main>
   );
 }

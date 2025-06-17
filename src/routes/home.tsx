@@ -14,13 +14,16 @@ import { AiTwotoneDelete } from "solid-icons/ai";
 import { openChromeExtension } from "~/util/links";
 import { createHotKeyCreator, createKeyBindController } from "~/hooks/createKeyBindController";
 import { IoExtensionPuzzleOutline } from "solid-icons/io";
+import { MAX_FREE_HOTKEYS, usePaywall } from "~/hooks/usePaywall";
+
 
 export default function Home() {
   const navigate = useNavigate();
   const [settings] = useSettings();
   const { KeyBindDialog, openKeyBindDialog } = createKeyBindDialog();
   const { createHotKey } = createHotKeyCreator();
-
+  const { openPaywall, isLicensed } = usePaywall();
+  const shouldOpenPaywall = () => !isLicensed() && settings.hotkeys.length > MAX_FREE_HOTKEYS;
   return (
     <Main>
       <KeyBindDialog onKeyBindUpdated={createHotKey} />
@@ -40,12 +43,22 @@ export default function Home() {
       <Show when={settings.hotkeys.length > 0} fallback={
         <div class={"flex flex-col justify-center items-center"}>
           <h2 class={"my-4"}>No hotkeys set!</h2>
-          <Button size={"lg"} onClick={openKeyBindDialog}>
+          <Button size={"lg"} onClick={() => {
+            if (shouldOpenPaywall())
+              openPaywall();
+            else
+              openKeyBindDialog();
+          }}>
             Create a new hotkey
           </Button>
         </div>
       }>
-        <Button size={"lg"} class={"w-fit my-4"} onClick={openKeyBindDialog}>
+        <Button size={"lg"} class={"w-fit my-4"} onClick={() => {
+          if (shouldOpenPaywall())
+            openPaywall();
+          else
+            openKeyBindDialog();
+        }}>
           Define new key
         </Button>
         <For each={settings.hotkeys}>{hotkey => (

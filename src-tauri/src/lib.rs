@@ -38,6 +38,7 @@ pub async fn run() {
             to_tauri_global_shortcut,
             register_keybind_to_system,
             open_url,
+            reveal_file,
             get_system_fonts,
             input_license,
             has_license,
