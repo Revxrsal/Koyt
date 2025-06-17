@@ -15,16 +15,21 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { createFontsResource } from "~/hooks/createFontsResource";
+import { onMount } from "solid-js";
+import { appLocalDataDir } from "@tauri-apps/api/path";
 
 export default function Settings() {
   const [settings, setSettings] = useSettings();
   const navigate = useNavigate();
   const isSystemDarkTheme = createDarkThemeQuery();
   const [systemFonts] = createFontsResource();
+  onMount(async () => {
+    console.log(await appLocalDataDir());
+  });
   return (
     <Main>
       <div>
-        <Button onClick={() => navigate("/")}>
+        <Button onClick={() => navigate("/home")}>
           <VsHome size={23} />
           <p class={"ms-4"}>Home</p>
         </Button>

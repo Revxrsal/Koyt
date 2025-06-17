@@ -1,3 +1,5 @@
+#![allow(async_fn_in_trait)]
+
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
@@ -23,20 +25,20 @@ fn open_log_file() {
     #[cfg(target_os = "macos")]
     let path = dirs_next::home_dir()
         .ok_or(tauri::Error::UnknownPath)
-        .map(|dir| dir
-            .join("Library/Logs")
-            .join(IDENTIFIER)
-            .join(format!("{}.log", APP_NAME))
-        );
+        .map(|dir| {
+            dir.join("Library/Logs")
+                .join(IDENTIFIER)
+                .join(format!("{}.log", APP_NAME))
+        });
 
     #[cfg(not(target_os = "macos"))]
     let path = dirs_next::data_local_dir()
         .ok_or(tauri::Error::UnknownPath)
-        .map(|dir| dir
-            .join(IDENTIFIER)
-            .join("logs")
-            .join(format!("{}.log", APP_NAME))
-        );
+        .map(|dir| {
+            dir.join(IDENTIFIER)
+                .join("logs")
+                .join(format!("{}.log", APP_NAME))
+        });
     if let Ok(path) = path {
         opener::reveal(path).unwrap();
     }

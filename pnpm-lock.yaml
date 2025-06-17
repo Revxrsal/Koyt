@@ -41,6 +41,9 @@ importers:
       '@tauri-apps/plugin-global-shortcut':
         specifier: ~2
         version: 2.2.0
+      '@tauri-apps/plugin-stronghold':
+        specifier: ~2
+        version: 2.2.1
       '@tauri-apps/plugin-window-state':
         specifier: ~2
         version: 2.2.1
@@ -74,6 +77,9 @@ importers:
       solid-sonner:
         specifier: ^0.2.8
         version: 0.2.8(solid-js@1.9.5)
+      solid-spinner:
+        specifier: ^0.2.0
+        version: 0.2.0(solid-js@1.9.5)
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.0.2
@@ -1265,6 +1271,9 @@ packages:
 
   '@tauri-apps/plugin-global-shortcut@2.2.0':
     resolution: {integrity: sha512-clI9Bg/BcxWXNDK+ij601o1qC2WxMEy8ovhGgEW5Ai17oPy0KK8uwzmc59KiVnOYKpBWHCUPqBxG+KBNUFXgzw==}
+
+  '@tauri-apps/plugin-stronghold@2.2.1':
+    resolution: {integrity: sha512-udDth65eSYFK8MUZoc78oIu3dlg3QnFky5O9/BKmX6suuq/CgzQJQK4t71yhBmO4Ch4C2DW/Lg5CgoCLDHx6Cw==}
 
   '@tauri-apps/plugin-window-state@2.2.1':
     resolution: {integrity: sha512-L7FhG/ocQNt8t+TMBkvl8eLhCU6I19t848unKMUgNHuvwHPaurzZr4knulNyKzqz7zVYSz9AdvgWy4915eq+AA==}
@@ -2801,6 +2810,12 @@ packages:
     peerDependencies:
       solid-js: ^1.6.0
 
+  solid-spinner@0.2.0:
+    resolution: {integrity: sha512-xLTYFljnvtp8evg9H1Cs4UlIwFelO9HYmRF/bfByhlrcilHJwyQgSus9ICbu8Gt/CUubpT4LsADWxJ9rYg8VHA==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      solid-js: '*'
+
   solid-use@0.9.1:
     resolution: {integrity: sha512-UwvXDVPlrrbj/9ewG9ys5uL2IO4jSiwys2KPzK4zsnAcmEl7iDafZWW1Mo4BSEWOmQCGK6IvpmGHo1aou8iOFw==}
     engines: {node: '>=10'}
@@ -4302,6 +4317,10 @@ snapshots:
       '@tauri-apps/api': 2.4.0
 
   '@tauri-apps/plugin-global-shortcut@2.2.0':
+    dependencies:
+      '@tauri-apps/api': 2.4.0
+
+  '@tauri-apps/plugin-stronghold@2.2.1':
     dependencies:
       '@tauri-apps/api': 2.4.0
 
@@ -5950,6 +5969,10 @@ snapshots:
       - supports-color
 
   solid-sonner@0.2.8(solid-js@1.9.5):
+    dependencies:
+      solid-js: 1.9.5
+
+  solid-spinner@0.2.0(solid-js@1.9.5):
     dependencies:
       solid-js: 1.9.5
 

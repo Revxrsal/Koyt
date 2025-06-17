@@ -6,12 +6,13 @@ import { useColorMode } from "@kobalte/core/color-mode";
 export const [preferences, setPreferences] = createStore<Preferences>(loadPreferences());
 
 export interface Preferences {
+  license: "free" | "paid" | null;
   theme: "dark" | "light" | "system";
   appFont: string | null;
 }
 
 function createDefaultPreferences(): Preferences {
-  return { theme: "system", appFont: null };
+  return { license: null, theme: "system", appFont: null };
 }
 
 function loadPreferences(): Preferences {

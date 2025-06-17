@@ -1,19 +1,25 @@
+#![allow(async_fn_in_trait)]
+
+pub mod chrome;
 pub mod cli;
 pub mod ipc;
 pub mod keybind;
+pub mod license;
+pub mod platform;
+pub mod runtime;
 pub mod settings;
 pub mod setup;
 pub mod tray;
+pub mod utils;
 pub mod window;
-pub mod runtime;
-pub mod platform;
-pub mod chrome;
 
 use keybind::commands::*;
+use license::commands::*;
+use log::LevelFilter;
 use settings::commands::*;
 use std::sync::Arc;
-use log::LevelFilter;
 use tauri::State;
+use utils::commands::*;
 
 use crate::settings::running_app_state::RunningAppState;
 use crate::window::open_main_window;
@@ -32,7 +38,11 @@ pub async fn run() {
             to_tauri_global_shortcut,
             register_keybind_to_system,
             open_url,
-            get_system_fonts
+            get_system_fonts,
+            input_license,
+            has_license,
+            renew_app_license,
+            deactivate_instance
         ])
         .events(collect_events![])
         .error_handling(ErrorHandlingMode::Result);
@@ -57,9 +67,11 @@ pub async fn run() {
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             open_main_window(app);
         }))
-        .plugin(tauri_plugin_log::Builder::default().level(
-            LevelFilter::Debug
-        ).build())
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .level(LevelFilter::Debug)
+                .build(),
+        )
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_fs::init())

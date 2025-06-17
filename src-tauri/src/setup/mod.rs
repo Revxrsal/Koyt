@@ -10,13 +10,18 @@ use common::message::Message;
 use std::sync::Arc;
 use tauri::{App, AppHandle, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, RwLock};
+use crate::license::handler::LicenseHandler;
 
 type ShortcutErr = tauri_plugin_global_shortcut::Error;
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+    setup_stronghold(app)?;
     let handle = app.handle().clone();
     let app_state = RunningAppState::load(&handle);
+    let license = Mutex::new(LicenseHandler::new(app.handle().clone()));
+    handle.manage(license);
+    
     #[cfg(not(debug_assertions))]
     {
         use tauri_plugin_autostart::ManagerExt;
@@ -49,6 +54,16 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+fn setup_stronghold(app: &mut App) -> tauri::Result<()> {
+    let salt_path = app
+        .path()
+        .app_local_data_dir()
+        .expect("could not resolve app local data path")
+        .join("peppery-salt.txt");
+    app.handle()
+        .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())
 }
 
 fn register_global_shortcuts(
