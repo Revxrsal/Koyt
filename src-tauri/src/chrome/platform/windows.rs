@@ -40,7 +40,7 @@ pub fn register_host_to_chrome_apps(app_handle: &AppHandle) -> anyhow::Result<()
         ),
         &file,
     )?;
-    // install_extension(EXTENSION_ID)?;
+    install_extension(EXTENSION_ID)?;
     Ok(())
 }
 
