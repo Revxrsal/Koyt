@@ -1,5 +1,5 @@
 import Main from "~/components/layout/Main";
-import { For, Show } from "solid-js";
+import { For, onMount, Show } from "solid-js";
 import { useSettings } from "~/util/settings";
 import { Card } from "~/components/ui/card";
 import { HotKey } from "~/gen/bindings";
@@ -10,11 +10,17 @@ import { createConfirmationDialog } from "~/hooks/createConfirmationDialog";
 import { VsSettings } from "solid-icons/vs";
 import { useNavigate } from "@solidjs/router";
 import VideoActionPicker from "~/components/action/VideoActionPicker";
-import { AiTwotoneDelete } from "solid-icons/ai";
+import { AiFillWarning, AiTwotoneDelete } from "solid-icons/ai";
 import { openChromeExtension } from "~/util/links";
 import { createHotKeyCreator, createKeyBindController } from "~/hooks/createKeyBindController";
 import { IoExtensionPuzzleOutline } from "solid-icons/io";
 import { MAX_FREE_HOTKEYS, usePaywall } from "~/hooks/usePaywall";
+import { createFailedKeyBindsResource } from "~/hooks/createFailedKeyBindsResource";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "~/components/ui/hover-card";
+import { createConnectedClientsSignal } from "~/hooks/createConnectedClientsSignal";
+import { ImConnection } from "solid-icons/im";
+import { createUpdateChecker } from "~/hooks/createUpdateChecker";
+import { isUpdateAvailable } from "~/hooks/createVersionChecker";
 
 
 export default function Home() {
@@ -23,6 +29,14 @@ export default function Home() {
   const { KeyBindDialog, openKeyBindDialog } = createKeyBindDialog();
   const { createHotKey } = createHotKeyCreator();
   const { openPaywall, isLicensed } = usePaywall();
+  const [failedKeyBinds] = createFailedKeyBindsResource();
+  const connectedClients = createConnectedClientsSignal();
+  const { openUpdateDialog } = createUpdateChecker();
+  onMount(() => {
+    if (isUpdateAvailable()) {
+      openUpdateDialog();
+    }
+  });
   const shouldOpenPaywall = () => !isLicensed() && settings.hotkeys.length > MAX_FREE_HOTKEYS;
   return (
     <Main>
@@ -32,9 +46,13 @@ export default function Home() {
           <VsSettings size={23} />
           <p class={"ms-4"}>Settings</p>
         </Button>
-        <Button onClick={openChromeExtension}>
+        <Button class={"me-4"} onClick={openChromeExtension}>
           <IoExtensionPuzzleOutline size={20} />
           <p class={"ms-4"}>Get Chrome Extension</p>
+        </Button>
+        <Button variant={"outline"} class={"cursor-default"}>
+          <ImConnection size={20} />
+          <p class={"ms-4"}>Connected browsers: {connectedClients()}</p>
         </Button>
       </div>
       <h1 class={"me-8 ms-2 my-8"}>
@@ -62,7 +80,7 @@ export default function Home() {
           Define new key
         </Button>
         <For each={settings.hotkeys}>{hotkey => (
-          <HotKeyOptions hotkey={hotkey} />
+          <HotKeyOptions hotkey={hotkey} error={failedKeyBinds()![hotkey.id]} />
         )}
         </For>
       </Show>
@@ -70,7 +88,7 @@ export default function Home() {
   );
 }
 
-function HotKeyOptions(props: { hotkey: HotKey }) {
+function HotKeyOptions(props: { hotkey: HotKey, error?: string }) {
   const { KeyBindDialog, openKeyBindDialog } = createKeyBindDialog(props.hotkey.id);
   const { updateHotKey, deleteHotKey } = createKeyBindController(props.hotkey.id);
 
@@ -82,9 +100,25 @@ function HotKeyOptions(props: { hotkey: HotKey }) {
   return (
     <Card class={"my-4 p-8 relative"}>
 
-      <Button variant="destructive" onClick={openDeletionDialog}>
+      <Button variant="destructive" onClick={openDeletionDialog} class={"me-3"}>
         <AiTwotoneDelete size={24} />
       </Button>
+
+      <Show when={props.error}>
+        <HoverCard placement={"top"} openDelay={10} closeDelay={10}>
+          <HoverCardTrigger>
+            <Button variant={"outline"} class={"cursor-default"}>
+              <AiFillWarning size={24} />
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <h4>Failed to register this hotkey on startup.</h4>
+            <hr class={"my-3"} />
+            <p>Error: {props.error}</p>
+          </HoverCardContent>
+        </HoverCard>
+      </Show>
+
 
       <DeletionConfirmationDialog>
         Are you sure you want to delete this hotkey? This action cannot be undone!

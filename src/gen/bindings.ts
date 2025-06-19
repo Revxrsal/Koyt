@@ -37,6 +37,14 @@ async registerKeybindToSystem(target: HotKey) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getFailedKeyBinds() : Promise<Result<Partial<{ [key in number]: string }>, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_failed_key_binds") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async openUrl(url: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("open_url", { url }) };
@@ -56,6 +64,14 @@ async revealFile(path: string) : Promise<Result<null, string>> {
 async getSystemFonts() : Promise<Result<string[], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_system_fonts") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getLatestVersion() : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_latest_version") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -98,6 +114,13 @@ async deactivateInstance() : Promise<Result<null, string>> {
 /** user-defined events **/
 
 
+export const events = __makeEvents__<{
+clientConnectedEvent: ClientConnectedEvent,
+clientDisconnectedEvent: ClientDisconnectedEvent
+}>({
+clientConnectedEvent: "client-connected-event",
+clientDisconnectedEvent: "client-disconnected-event"
+})
 
 /** user-defined constants **/
 
@@ -107,6 +130,8 @@ async deactivateInstance() : Promise<Result<null, string>> {
 
 export type AppSettings = { hotkeys: HotKey[]; launch_on_startup: boolean; minimize_to_tray_on_close: boolean }
 export type BoolAction = "Enable" | "Disable" | "Toggle"
+export type ClientConnectedEvent = { total_count: number }
+export type ClientDisconnectedEvent = { total_count: number }
 export type HotKey = { id: number; keybind: KeyBind; video_action: VideoAction }
 export type KeyBind = { shift: boolean; ctrl: boolean; alt: boolean; meta: boolean; key: string }
 export type VideoAction = "Nothing" | { Playing: BoolAction } | { Fullscreen: BoolAction } | { Subtitles: BoolAction } | { PiP: BoolAction } | { Loop: BoolAction } | { ChangeSpeed: number } | { SetSpeed: number } | { ChangeVolume: number } | { SetVolume: number } | { Forward: number } | { Rewind: number } | "TakeScreenshot"

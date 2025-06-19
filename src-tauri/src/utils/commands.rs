@@ -20,3 +20,14 @@ pub async fn get_system_fonts() -> Result<Vec<String>, String> {
     let source = SystemSource::new();
     source.all_families().map_err(|e| e.to_string())
 }
+
+#[command]
+#[specta]
+pub async fn get_latest_version() -> Result<String, String> {
+    let response = reqwest::get("https://kbyoutube.com/api/v1/get-version").await;
+    if let Ok(response) = response {
+        let v: String = response.json().await.unwrap();
+        return Ok(v);
+    }
+    Err(format!("{}", response.err().unwrap()))
+}

@@ -1,3 +1,4 @@
+use crate::event::client::{ClientConnectedEvent, ClientDisconnectedEvent};
 use crate::ipc::client::Client;
 use common::ipc::ipc_address;
 use common::message::Message;
@@ -5,7 +6,12 @@ use interprocess::local_socket::tokio::Listener as LocalSocketListener;
 use interprocess::local_socket::traits::tokio::Listener;
 use interprocess::local_socket::ListenerOptions;
 use std::io;
+use std::sync::Arc;
+use std::sync::atomic::AtomicU32;
+use std::sync::atomic::Ordering::SeqCst;
 use std::time::Duration;
+use tauri::AppHandle;
+use tauri_specta::Event;
 use tokio::sync::broadcast::{Receiver, Sender};
 use tokio::time::interval;
 
@@ -13,6 +19,7 @@ pub struct IpcServer {
     listener: LocalSocketListener,
     sender: Sender<Message>,
     receiver: Receiver<Message>,
+    count: Arc<AtomicU32>,
 }
 
 impl IpcServer {
@@ -26,6 +33,7 @@ impl IpcServer {
                 listener,
                 sender: tx,
                 receiver: rx,
+                count: Arc::new(AtomicU32::new(0)),
             },
             Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
                 // When a program that uses a file-type socket name terminates its socket server
@@ -48,16 +56,20 @@ impl IpcServer {
         Ok(server)
     }
 
-    pub async fn start(self) {
+    pub async fn start(self, app_handle: AppHandle) {
         loop {
-            let conn = match self.listener.accept().await {
+            let conn = match self.listener().accept().await {
                 Ok(c) => c,
                 Err(e) => {
                     eprintln!("There was an error with an incoming connection: {e}");
                     continue;
                 }
             };
-            let keep_alive = self.sender.clone();
+            let _ = ClientConnectedEvent {
+                total_count: self.count().fetch_add(1, SeqCst) + 1,
+            }
+                .emit(&app_handle);
+            let keep_alive = self.sender().clone();
             tokio::spawn(async move {
                 let mut interval = interval(Duration::from_secs(5));
                 loop {
@@ -68,12 +80,18 @@ impl IpcServer {
                     interval.tick().await;
                 }
             });
-            let rx = self.receiver.resubscribe();
+            let rx = self.receiver().resubscribe();
 
             let client = Client::new(conn, rx);
+            let app_handle = app_handle.clone();
+            let count = Arc::clone(&self.count);
             tokio::spawn(async move {
                 if let Err(e) = client.handle().await {
                     eprintln!("error while handling connection: {e}");
+                } else {
+                    let _ = ClientDisconnectedEvent {
+                        total_count: count.fetch_sub(1, SeqCst) - 1,
+                    }.emit(&app_handle);
                 }
             });
         }
@@ -83,6 +101,22 @@ impl IpcServer {
         ActionHandle {
             sender: self.sender.clone(),
         }
+    }
+
+    pub fn count(&self) -> &AtomicU32 {
+        &self.count
+    }
+
+    pub fn receiver(&self) -> &Receiver<Message> {
+        &self.receiver
+    }
+
+    pub fn sender(&self) -> &Sender<Message> {
+        &self.sender
+    }
+
+    pub fn listener(&self) -> &LocalSocketListener {
+        &self.listener
     }
 }
 

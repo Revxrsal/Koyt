@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::settings::persist::{read_settings, save_settings};
 use crate::settings::AppSettings;
 use std::sync::Arc;
@@ -12,6 +13,7 @@ pub struct RunningAppState {
     settings: AppSettings,
     app_handle: AppHandle,
     next_saving_task: Option<JoinHandle<()>>,
+    failed_keybinds: HashMap<i32, String>
 }
 
 impl RunningAppState {
@@ -21,6 +23,7 @@ impl RunningAppState {
             app_handle: app_handle.clone(),
             settings: app_settings,
             next_saving_task: None,
+            failed_keybinds: HashMap::new(),
         }
     }
 
@@ -56,6 +59,14 @@ impl RunningAppState {
             task.abort();
             save_settings(&self.settings, &self.app_handle).unwrap();
         }
+    }
+
+    pub fn failed_keybinds(&self) -> &HashMap<i32, String> {
+        &self.failed_keybinds
+    }
+    
+    pub fn failed_keybinds_mut(&mut self) -> &mut HashMap<i32, String> {
+        &mut self.failed_keybinds
     }
 }
 

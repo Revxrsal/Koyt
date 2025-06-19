@@ -13,6 +13,7 @@ pub mod tray;
 pub mod utils;
 pub mod window;
 pub mod encryption;
+pub mod event;
 
 use keybind::commands::*;
 use license::commands::*;
@@ -38,15 +39,20 @@ pub async fn run() {
             set_settings,
             to_tauri_global_shortcut,
             register_keybind_to_system,
+            get_failed_key_binds,
             open_url,
             reveal_file,
             get_system_fonts,
+            get_latest_version,
             input_license,
             has_license,
             renew_app_license,
             deactivate_instance
         ])
-        .events(collect_events![])
+        .events(collect_events![
+            event::client::ClientConnectedEvent,
+            event::client::ClientDisconnectedEvent,
+        ])
         .error_handling(ErrorHandlingMode::Result);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds

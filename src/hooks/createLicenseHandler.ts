@@ -12,6 +12,10 @@ export async function openBuyPage() {
   await commands.openUrl("https://kbyoutube.com/pricing");
 }
 
+export async function openDownloadPage() {
+  await commands.openUrl("https://kbyoutube.com/download");
+}
+
 export function createLicenseHandler() {
 
   const navigate = useNavigate();

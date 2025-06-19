@@ -1,5 +1,6 @@
 use crate::cli::Args;
 use crate::ipc::listener::{ActionHandle, IpcServer};
+use crate::license::handler::LicenseHandler;
 use crate::settings::running_app_state::RunningAppState;
 use crate::settings::AppSettings;
 use crate::tray::create_tray;
@@ -11,7 +12,6 @@ use std::sync::Arc;
 use tauri::{App, AppHandle, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 use tokio::sync::{Mutex, RwLock};
-use crate::license::handler::LicenseHandler;
 
 type ShortcutErr = tauri_plugin_global_shortcut::Error;
 
@@ -21,7 +21,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let app_state = RunningAppState::load(&handle);
     let license = Mutex::new(LicenseHandler::new(app.handle().clone()));
     handle.manage(license);
-    
+
     #[cfg(not(debug_assertions))]
     {
         use tauri_plugin_autostart::ManagerExt;
@@ -36,8 +36,9 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let action_handle = server.action_handle();
     handle.manage(server.action_handle());
     {
+        let app_handle = app.handle().clone();
         tokio::spawn(async move {
-            server.start().await;
+            server.start(app_handle).await;
         });
     }
 
@@ -72,7 +73,17 @@ fn register_global_shortcuts(
     sender: ActionHandle,
 ) -> Result<(), ShortcutErr> {
     for x in settings.hotkeys() {
-        register_keybind(handle, x, sender.clone())?;
+        let res = register_keybind(handle, x, sender.clone());
+        if let Err(why) = res {
+            let id = x.id();
+            let handle = handle.clone();
+            let err = why.to_string();
+            tokio::spawn(async move {
+                let state = handle.state::<Arc<RwLock<RunningAppState>>>();
+                let mut running_app_state = state.write().await;
+                running_app_state.failed_keybinds_mut().insert(id, err);
+            });
+        }
     }
     Ok(())
 }

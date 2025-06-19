@@ -1,5 +1,4 @@
 #![allow(async_fn_in_trait)]
-
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
@@ -8,12 +7,12 @@ async fn main() {
     #[cfg(not(debug_assertions))]
     std::panic::set_hook(Box::new(|info| {
         log::error!("Panicked: {:?}", info);
-        native_dialog::MessageDialog::new()
-            .set_type(native_dialog::MessageType::Error)
+        native_dialog::MessageDialogBuilder::default()
+            .set_level(native_dialog::MessageLevel::Error)
             .set_title("Failed to start KeyBoard-Operated YouTube")
             .set_text(&format!("Error: {:#?}", info))
-            .show_alert()
-            .unwrap();
+            .alert()
+            .show();
         open_log_file();
     }));
     app_lib::run().await;
