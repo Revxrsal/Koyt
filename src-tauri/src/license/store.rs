@@ -1,4 +1,4 @@
-use crate::license::encryption::encryptor;
+use crate::encryption::encryptor;
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use std::fs;

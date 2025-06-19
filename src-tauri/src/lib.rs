@@ -12,6 +12,7 @@ pub mod setup;
 pub mod tray;
 pub mod utils;
 pub mod window;
+pub mod encryption;
 
 use keybind::commands::*;
 use license::commands::*;

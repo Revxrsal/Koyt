@@ -4,7 +4,6 @@ use reqwest::Client;
 pub mod activate;
 pub mod commands;
 pub mod deactivate;
-mod encryption;
 pub mod errors;
 pub mod handler;
 pub mod store;
