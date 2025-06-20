@@ -5,6 +5,9 @@ dist
 .netlify
 .vinxi
 app.config.timestamp_*.js
+src-tauri/target
+src-tauri/message_host/target
+src-tauri/common/target
 
 # Environment
 .env

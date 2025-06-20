@@ -1,0 +1,39 @@
+# Configuration for the *.msix package. These can be fetched from the
+# Partner Center.
+#
+# See https://gezihuzi.github.io/2024/04/05/publish-tauri-app-to-ms-store.html
+package:
+
+  # The package name. Copied from the Partner Center
+  name: AliAl-Kasasbeh.Keyboard-OperatedYouTube
+
+  # The package display name. Copied from the Partner Center
+  display-name: Keyboard-Operated YouTube
+
+  # The package description
+  description: Control YouTube (and other video players) via global system hotkeys
+
+  # The package publisher. Copied from the Partner Center
+  publisher: CN=D81ABC3A-3CD3-4D63-B857-5F9DFC97779F
+
+  # The publisher display name. Copied from the Partner Center
+  publisher-display-name: Ali Al-Kasasbeh
+
+# Configuration for the tooling
+tooling:
+
+  # The number of times the tool should retry to generate the msix package
+  retry-count: 3
+
+  # the directory to search in for *.msi files. The newest .msi file will
+  # be picked.
+  search-for-installers-in: ../src-tauri/target/release/bundle/msi
+
+  # Should temporary files be deleted automatically?
+  delete-temp-files: true
+
+  # Should the *.msix package be shown in the explorer after publishing?
+  show-in-explorer: true
+
+  # Should the *.msix file path be copied to the clipboard?
+  copy-path-to-clipboard: true

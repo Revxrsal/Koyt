@@ -5,7 +5,7 @@ use opener::open;
 pub fn launch_app() {
     #[cfg(target_os = "windows")]
     {
-        let app_file = absolute(Path::new("KbYouTube")).unwrap();
+        let app_file = absolute(Path::new("KbYouTube.exe")).unwrap();
         if let Err(why) = open(&app_file) {
             // println!("Failed to open app: {:?}", why);
         }

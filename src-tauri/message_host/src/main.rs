@@ -47,15 +47,18 @@ async fn main() -> anyhow::Result<()> {
 async fn listen_to_ipc(
     reader: &mut Option<BufReader<LocalSocketStream>>,
 ) -> anyhow::Result<Message> {
-    // 🌟 Set a timeout for connection attempts
-    if reader.is_none() {
-        let conn = match timeout(Duration::from_secs(5), connect()).await {
-            Ok(Ok(stream)) => stream, // Successfully connected
-            Ok(Err(why)) => return Err(why.into()),
-            Err(err) => return Err(err.into()), // Connection failed
-        };
-
-        *reader = Some(BufReader::new(conn));
+    while reader.is_none() {
+        match timeout(Duration::from_secs(5), connect()).await {
+            Ok(Ok(stream)) => {
+                *reader = Some(BufReader::new(stream));
+            }
+            Ok(Err(e)) => {
+                tokio::time::sleep(Duration::from_secs(5)).await;
+            }
+            Err(_) => {
+                tokio::time::sleep(Duration::from_secs(5)).await;
+            }
+        }
     }
     let reader = reader.as_mut().unwrap();
     let mut length_buffer = [0u8; 4];

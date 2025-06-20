@@ -1,6 +1,5 @@
 use common::message::Message;
 use interprocess::local_socket::tokio::Stream;
-use tauri::AppHandle;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::broadcast::Receiver;
 

@@ -40,6 +40,7 @@ pub fn register_host_to_chrome_apps(app_handle: &AppHandle) -> anyhow::Result<()
         ),
         &file,
     )?;
+    #[cfg(not(debug_assertions))]
     install_extension(EXTENSION_ID)?;
     Ok(())
 }

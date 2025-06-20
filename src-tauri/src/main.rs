@@ -12,7 +12,8 @@ async fn main() {
             .set_title("Failed to start KeyBoard-Operated YouTube")
             .set_text(&format!("Error: {:#?}", info))
             .alert()
-            .show();
+            .show()
+            .unwrap();
         open_log_file();
     }));
     app_lib::run().await;
