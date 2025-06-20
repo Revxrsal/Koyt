@@ -21,7 +21,7 @@ jobs:
             args: "--target aarch64-apple-darwin"
           - platform: "macos-latest" # for Intel based macs.
             args: "--target x86_64-apple-darwin"
-          - platform: "windows-latest"
+          - platform: "self-hosted"
             args: ""
           - platform: 'ubuntu-22.04'
             args: ''
