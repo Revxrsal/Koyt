@@ -23,6 +23,7 @@ import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { appDataDir, appLocalDataDir } from "@tauri-apps/api/path";
 import { commands } from "~/gen/bindings";
 import { showErrorToast } from "~/util/toaster";
+import { usePaywall } from "~/hooks/usePaywall";
 
 function RevealableFilePath(props: { path: string }) {
   async function reveal() {
@@ -49,7 +50,7 @@ export default function Settings() {
   const [tauriVersion] = createResource(getTauriVersion);
   const [appData] = createResource(async () => (await appDataDir()).replaceAll("\\", "/"));
   const [localAppData] = createResource(async () => (await appLocalDataDir()).replaceAll("\\", "/"));
-
+  const { openPaywall, isLicensed } = usePaywall();
 
   onMount(async () => {
     if (!preferences.license) {
@@ -122,7 +123,12 @@ export default function Settings() {
 
         <Switch
           checked={settings.launch_on_startup}
-          onChange={v => setSettings("launch_on_startup", v)}
+          onChange={v => {
+            if (isLicensed())
+              setSettings("launch_on_startup", v);
+            else
+              openPaywall();
+          }}
           class={"flex items-center my-8"}
         >
           <SwitchControl class={"ms-4"}>
@@ -179,11 +185,11 @@ export default function Settings() {
           <strong>Tauri version: </strong> {tauriVersion()}
         </p>
         <p class={"text-xl my-2"}>
-          <strong>App data directory: </strong> <RevealableFilePath path={appData() || ""}/>
+          <strong>App data directory: </strong> <RevealableFilePath path={appData() || ""} />
         </p>
 
         <p class={"text-xl my-2"}>
-          <strong>Local app data directory: </strong> <RevealableFilePath path={localAppData() || ""}/>
+          <strong>Local app data directory: </strong> <RevealableFilePath path={localAppData() || ""} />
         </p>
 
       </div>
