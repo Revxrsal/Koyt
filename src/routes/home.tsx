@@ -37,7 +37,7 @@ export default function Home() {
       openUpdateDialog();
     }
   });
-  const shouldOpenPaywall = () => !isLicensed() && settings.hotkeys.length > MAX_FREE_HOTKEYS;
+  const shouldOpenPaywall = () => !isLicensed() && settings.hotkeys.length >= MAX_FREE_HOTKEYS;
   return (
     <Main>
       <KeyBindDialog onKeyBindUpdated={createHotKey} />
