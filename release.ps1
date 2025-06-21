@@ -1,9 +1,9 @@
 # Define the commands
 $commands = @(
     "git checkout release",
-    "git reset master --hard",
+    "git reset dev --hard",
     "git push",
-    "git checkout master"
+    "git checkout dev"
 )
 
 # Execute each command
