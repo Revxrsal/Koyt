@@ -33,6 +33,12 @@
     ],
     "externalBin": [
       "message_host/target/release/message_host"
-    ]
+    ],
+	"windows": {
+      "wix": {
+        "dialogImagePath": "icons/WindowsDialogImage.bmp",
+        "bannerPath": "icons/WindowsBanner.bmp"
+      }
+    }
   }
 }

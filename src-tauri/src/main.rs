@@ -7,12 +7,12 @@ async fn main() {
     #[cfg(not(debug_assertions))]
     std::panic::set_hook(Box::new(|info| {
         log::error!("Panicked: {:?}", info);
-        native_dialog::MessageDialogBuilder::default()
-            .set_level(native_dialog::MessageLevel::Error)
+        #[cfg(not(debug_assertions))]
+        native_dialog::MessageDialog::new()
+            .set_type(native_dialog::MessageType::Error)
             .set_title("Failed to start KeyBoard-Operated YouTube")
             .set_text(&format!("Error: {:#?}", info))
-            .alert()
-            .show()
+            .show_alert()
             .unwrap();
         open_log_file();
     }));
