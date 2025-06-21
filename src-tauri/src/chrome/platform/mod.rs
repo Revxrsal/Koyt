@@ -7,13 +7,9 @@ use std::path::PathBuf;
 /// The native Chrome app ID
 pub(crate) const NATIVE_APP_ID: &'static str = "com.kbyoutube";
 
-pub(crate) const EXTENSION_ID: &'static str = "phgfelfegpojplnieiojbnefdeoafgog";
-
 /// The Chrome extension ID (for auto-installing the extension)
-// #[cfg(debug_assertions)]
+pub(crate) const EXTENSION_ID: &'static str = "hdffofcnfjaehdacnbhccnhnomaihcok";
 // pub(crate) const EXTENSION_ID: &'static str = "phgfelfegpojplnieiojbnefdeoafgog";
-// #[cfg(not(debug_assertions))]
-// pub(crate) const EXTENSION_ID: &'static str = "hdffofcnfjaehdacnbhccnhnomaihcok";
 
 /// The name of the host file
 pub(crate) const HOST_FILE_NAME: &'static str = "NativeChromeHost.json";
