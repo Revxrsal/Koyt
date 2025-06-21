@@ -1,4 +1,4 @@
-use cocoa::appkit::{NSApp, NSApplicationActivationPolicy::*};
+use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicy::*};
 
 pub fn set_dock_visible(visible: bool) {
     let policy = if visible {

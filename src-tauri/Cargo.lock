@@ -1105,6 +1105,7 @@ name = "common"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "dirs-next",
  "interprocess",
  "rand 0.9.1",
  "serde",
