@@ -63,4 +63,3 @@ native-dialog = { version = "0.7.0", features = ["windows_dpi_awareness", "windo
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.26.0"
 native-dialog = { version = "0.7.0" }
-dirs-next = "2.0.0"
