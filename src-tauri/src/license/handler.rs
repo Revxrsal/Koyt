@@ -6,6 +6,7 @@ use crate::license::LemonSqueezyClient;
 use chrono::Utc;
 use reqwest::Client;
 use tauri::AppHandle;
+use crate::license::activate::ActivateLicenseExt;
 
 const PRODUCT_ID: i64 = 548363;
 const STORE_ID: i64 = 96287;
@@ -31,14 +32,13 @@ impl LicenseHandler {
         license_key: String,
         instance_id: String,
     ) -> LSResult<bool> {
-        let validate = self
-            .client()
-            .validate_license(&license_key, &instance_id)
+        let activate = self.client()
+            .activate_license(&license_key, &instance_id)
             .await?;
-        if !self.client().is_our_product(&validate.meta) {
+        if !self.client().is_our_product(&activate.meta) {
             return Ok(false);
         }
-        if !validate.license_key.is_active() {
+        if !activate.license_key.is_active() {
             return Ok(false);
         }
         let refreshed = SecureLicenseStore::new(license_key, instance_id, Utc::now());

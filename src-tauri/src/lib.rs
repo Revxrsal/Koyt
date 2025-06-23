@@ -2,6 +2,8 @@
 
 pub mod chrome;
 pub mod cli;
+pub mod encryption;
+pub mod event;
 pub mod ipc;
 pub mod keybind;
 pub mod license;
@@ -12,8 +14,6 @@ pub mod setup;
 pub mod tray;
 pub mod utils;
 pub mod window;
-pub mod encryption;
-pub mod event;
 
 use keybind::commands::*;
 use license::commands::*;
@@ -89,7 +89,18 @@ pub async fn run() {
             builder.mount_events(app);
             setup::setup(app)
         });
-    app.build(tauri::generate_context!())
-        .expect("error while running tauri application")
-        .run(runtime::on_app_run);
+    let res = app.build(tauri::generate_context!());
+    match res {
+        Ok(app) => {
+            app.run(runtime::on_app_run);
+        }
+        Err(why) => {
+            native_dialog::MessageDialog::new()
+                .set_type(native_dialog::MessageType::Error)
+                .set_title("Failed to start Keyboard-Operated YouTube")
+                .set_text(&format!("Error: {:?}", why))
+                .show_alert()
+                .unwrap();
+        }
+    }
 }

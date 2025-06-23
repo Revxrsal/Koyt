@@ -65,7 +65,7 @@ function createInstanceField() {
 export default function InputLicense() {
   const { LicenseKeyField, licenseKey, isLicenceKeyValid } = createLicenseKeyField();
   const { InstanceIdField, instanceId, isInstanceIdValid } = createInstanceField();
-  const { inputLicense, proceedWithFreeVersion } = createLicenseHandler();
+  const { inputLicense, proceedWithFreeVersion, isSubmitting } = createLicenseHandler();
   const canSubmit = createMemo(() => isLicenceKeyValid() && isInstanceIdValid());
 
   return (
@@ -74,7 +74,7 @@ export default function InputLicense() {
       <div class={"flex flex-col"}>
         <LicenseKeyField class={"my-4 mb-2"} />
         <InstanceIdField class={"my-4 mb-4"} />
-        <Button class={"mt-2"} disabled={!canSubmit()} onClick={() => inputLicense(licenseKey(), instanceId())}>
+        <Button class={"mt-2"} disabled={!canSubmit() || isSubmitting()} onClick={() => inputLicense(licenseKey(), instanceId())}>
           Proceed
         </Button>
         <hr class={"mt-4 mb-2"} />

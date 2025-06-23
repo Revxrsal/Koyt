@@ -6,9 +6,9 @@ use interprocess::local_socket::tokio::Listener as LocalSocketListener;
 use interprocess::local_socket::traits::tokio::Listener;
 use interprocess::local_socket::ListenerOptions;
 use std::io;
-use std::sync::Arc;
 use std::sync::atomic::AtomicU32;
 use std::sync::atomic::Ordering::SeqCst;
+use std::sync::Arc;
 use std::time::Duration;
 use tauri::AppHandle;
 use tauri_specta::Event;
@@ -36,6 +36,11 @@ impl IpcServer {
                 count: Arc::new(AtomicU32::new(0)),
             },
             Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
+                let _ = native_dialog::MessageDialog::new()
+                    .set_type(native_dialog::MessageType::Error)
+                    .set_title("Failed to start IPC server")
+                    .set_text(&"Error: could not start server because the socket file is occupied. The app might have crashed and was unable to clean leftovers. Please restart the app a few times".to_string())
+                    .show_alert();
                 // When a program that uses a file-type socket name terminates its socket server
                 // without deleting the file, a "corpse socket" remains, which can neither be
                 // connected to nor reused by a new listener. Normally, Interprocess takes care of
@@ -45,10 +50,6 @@ impl IpcServer {
                 // There are multiple ways this error can be handled, if it occurs, but when the
                 // listener only comes from Interprocess, it can be assumed that its previous instance
                 // either has crashed or simply hasn't exited yet.
-                eprintln!(
-                    "Error: could not start server because the socket file is occupied. Please check
-                if {name:?} is in use by another process and try again."
-                );
                 return Err(e.into());
             }
             _ => unreachable!(),
@@ -68,7 +69,7 @@ impl IpcServer {
             let _ = ClientConnectedEvent {
                 total_count: self.count().fetch_add(1, SeqCst) + 1,
             }
-                .emit(&app_handle);
+            .emit(&app_handle);
             let keep_alive = self.sender().clone();
             tokio::spawn(async move {
                 let mut interval = interval(Duration::from_secs(5));
@@ -91,7 +92,8 @@ impl IpcServer {
                 } else {
                     let _ = ClientDisconnectedEvent {
                         total_count: count.fetch_sub(1, SeqCst) - 1,
-                    }.emit(&app_handle);
+                    }
+                    .emit(&app_handle);
                 }
             });
         }

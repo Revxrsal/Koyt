@@ -15,3 +15,9 @@ postcard = { version = "1.1.1", features = ["alloc"] }
 tokio = { version = "1.44.1", features = ["full"] }
 opener = "0.7.2"
 dirs-next = "2.0.0"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+native-dialog = { version = "0.7.0", features = ["windows_dpi_awareness", "windows_visual_styles"] }
+
+[target.'cfg(not(target_os = "windows"))'.dependencies]
+native-dialog = { version = "0.7.0" }
