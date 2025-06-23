@@ -62,23 +62,26 @@ async fn listen_to_ipc(
             }
         }
     }
-    let reader = reader.as_mut().unwrap();
+    let buf = reader.as_mut().unwrap();
     let mut length_buffer = [0u8; 4];
-    if let Err(why) = reader.read_exact(&mut length_buffer).await {
+    if let Err(why) = buf.read_exact(&mut length_buffer).await {
         let err_str = why.to_string();
         show_error(
             "Failed to read the message length from native app",
             &err_str,
         );
+        *reader = None;
         return Err(why.into());
     }
 
     let message_length = u32::from_le_bytes(length_buffer);
 
     let mut buffer: Vec<u8> = vec![0; message_length as usize];
-    if let Err(why) = reader.read_exact(&mut buffer).await {
+    if let Err(why) = buf.read_exact(&mut buffer).await {
         let err_str = why.to_string();
         show_error("Failed to read incoming message from native app", &err_str);
+        *reader = None;
+        return Err(why.into());
     };
     let message = postcard::from_bytes::<Message>(&buffer)?;
     Ok(message)

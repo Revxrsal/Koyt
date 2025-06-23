@@ -13,15 +13,16 @@ pub async fn read_message_from_stdin() -> Message {
     serde_json::from_slice(&buffer).unwrap()
 }
 
-pub async fn write_message<T>(response: &T)
+pub async fn write_message<T>(response: &T) -> anyhow::Result<()>
 where
     T: ?Sized + Serialize,
 {
     let mut stdout = tokio::io::stdout();
-    let response_data = serde_json::to_vec(&response).unwrap();
+    let response_data = serde_json::to_vec(&response)?;
     let response_size = response_data.len() as u32;
 
-    stdout.write_u32_le(response_size).await.unwrap();
-    stdout.write_all(&response_data).await.unwrap();
-    stdout.flush().await.unwrap();
+    stdout.write_u32_le(response_size).await?;
+    stdout.write_all(&response_data).await?;
+    stdout.flush().await?;
+    Ok(())
 }

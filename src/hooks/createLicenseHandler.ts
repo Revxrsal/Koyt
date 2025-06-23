@@ -36,6 +36,7 @@ export function createLicenseHandler() {
       return;
     }
     setSubmitting(false);
+    setPreferences("license", "paid");
     showSuccessToast("Success!", "Your license has been successfully activated! Enjoy the app :)");
     navigate("/home");
   }
