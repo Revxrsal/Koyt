@@ -77,6 +77,14 @@ async getLatestVersion() : Promise<Result<string, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async failedToRegisterHosts() : Promise<Result<boolean, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("failed_to_register_hosts") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async inputLicense(licenseKey: string, instanceId: string) : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("input_license", { licenseKey, instanceId }) };

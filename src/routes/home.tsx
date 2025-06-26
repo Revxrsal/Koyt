@@ -21,6 +21,9 @@ import { createConnectedClientsSignal } from "~/hooks/createConnectedClientsSign
 import { ImConnection } from "solid-icons/im";
 import { createUpdateChecker } from "~/hooks/createUpdateChecker";
 import { isUpdateAvailable } from "~/hooks/createVersionChecker";
+import { createFailedHostResource } from "~/hooks/createFailedHostResource";
+import { BiSolidError } from "solid-icons/bi";
+import { createHostRegistrationDialog } from "~/hooks/createHostRegistrationDialog";
 
 
 export default function Home() {
@@ -30,8 +33,10 @@ export default function Home() {
   const { createHotKey } = createHotKeyCreator();
   const { openPaywall, isLicensed } = usePaywall();
   const [failedKeyBinds] = createFailedKeyBindsResource();
+  const [failedToRegisterHost] = createFailedHostResource();
   const connectedClients = createConnectedClientsSignal();
   const { openUpdateDialog } = createUpdateChecker();
+  const { openHostRegistrationDialog, dismissHostRegistrationError } = createHostRegistrationDialog();
   onMount(() => {
     if (isUpdateAvailable()) {
       openUpdateDialog();
@@ -50,10 +55,16 @@ export default function Home() {
           <IoExtensionPuzzleOutline size={20} />
           <p class={"ms-4"}>Get Chrome Extension</p>
         </Button>
-        <Button variant={"outline"} class={"cursor-default"}>
+        <Button variant={"outline"} class={"me-4 cursor-default"}>
           <ImConnection size={20} />
           <p class={"ms-4"}>Connected browsers: {connectedClients()}</p>
         </Button>
+        <Show when={failedToRegisterHost() && !dismissHostRegistrationError()}>
+          <Button variant={"destructive"} class={"me-4"} onClick={openHostRegistrationDialog}>
+            <BiSolidError size={20} />
+            <p class={"ms-4"}>Error</p>
+          </Button>
+        </Show>
       </div>
       <h1 class={"me-8 ms-2 my-8"}>
         KeyBinds

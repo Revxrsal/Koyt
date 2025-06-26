@@ -51,7 +51,15 @@ impl IpcServer {
                 // either has crashed or simply hasn't exited yet.
                 return Err(e.into());
             }
-            _ => unreachable!(),
+            e => {
+                let error = e.err().unwrap();
+                let _ = native_dialog::MessageDialog::new()
+                    .set_type(native_dialog::MessageType::Error)
+                    .set_title("Failed to start IPC server")
+                    .set_text(&format!("Error: could not start IPC server. Please restart the app a few times. Error:\n{:?}", &error))
+                    .show_alert();
+                return Err(error.into());
+            },
         };
         Ok(server)
     }

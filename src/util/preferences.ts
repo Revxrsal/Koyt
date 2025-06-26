@@ -9,10 +9,11 @@ export interface Preferences {
   license: "free" | "paid" | null;
   theme: "dark" | "light" | "system";
   appFont: string | null;
+  dismissHostRegistrationWarning: boolean;
 }
 
 function createDefaultPreferences(): Preferences {
-  return { license: null, theme: "system", appFont: null };
+  return { license: null, theme: "system", appFont: null, dismissHostRegistrationWarning: false };
 }
 
 function loadPreferences(): Preferences {

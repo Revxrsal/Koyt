@@ -1,5 +1,7 @@
+use crate::chrome::REGISTERED_HOST;
 use font_kit::source::SystemSource;
 use specta::specta;
+use std::sync::atomic::Ordering;
 use tauri::command;
 
 #[command]
@@ -30,4 +32,10 @@ pub async fn get_latest_version() -> Result<String, String> {
         return Ok(v);
     }
     Err(format!("{}", response.err().unwrap()))
+}
+
+#[command]
+#[specta]
+pub async fn failed_to_register_hosts() -> Result<bool, ()> {
+    return Ok(REGISTERED_HOST.load(Ordering::SeqCst));
 }

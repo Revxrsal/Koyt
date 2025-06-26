@@ -44,6 +44,7 @@ pub async fn run() {
             reveal_file,
             get_system_fonts,
             get_latest_version,
+            failed_to_register_hosts,
             input_license,
             has_license,
             renew_app_license,

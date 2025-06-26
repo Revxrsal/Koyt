@@ -41,6 +41,17 @@ fn get_message_host_file() -> Option<PathBuf> {
                     .unwrap_or_default()
                     .starts_with(HOST_EXECUTABLE)
                 {
+                    // let path = absolute(&path);
+                    // if let Err(err) = path {
+                    //     let _ = native_dialog::MessageDialog::new()
+                    //         .set_type(native_dialog::MessageType::Error)
+                    //         .set_title("Failed to resolve native host file")
+                    //         .set_text(&format!("Failed to find the message_host executable: {:?}", err).to_string())
+                    //         .show_alert();
+                    //
+                    //     return None;
+                    // }
+                    // return Some(path.unwrap());
                     return Some(path);
                 }
             }

@@ -41,7 +41,16 @@ pub fn register_host_to_chrome_apps(app_handle: &AppHandle) -> anyhow::Result<()
         &file,
     )?;
     #[cfg(not(debug_assertions))]
-    install_extension(EXTENSION_ID)?;
+    {
+        install_extension(&format!(
+            "Software\\Google\\Chrome\\Extensions\\{}",
+            EXTENSION_ID
+        ))?;
+        install_extension(&format!(
+            "Software\\Microsoft\\Edge\\Extensions\\{}",
+            EXTENSION_ID
+        ))?;
+    }
     Ok(())
 }
 
@@ -51,12 +60,9 @@ fn register_to_registry(path: String, file: &PathBuf) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn install_extension(extension_id: &str) -> io::Result<()> {
+pub fn install_extension(registry: &str) -> io::Result<()> {
     let key = RegKey::predef(HKEY_CURRENT_USER);
-    let (key, _) = key.create_subkey(format!(
-        "Software\\Google\\Chrome\\Extensions\\{}",
-        extension_id
-    ))?;
+    let (key, _) = key.create_subkey(registry)?;
     key.set_value(
         "update_url",
         &"https://clients2.google.com/service/update2/crx",
