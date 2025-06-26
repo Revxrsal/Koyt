@@ -2,7 +2,6 @@ use crate::cli::Args;
 use crate::ipc::listener::{ActionHandle, IpcServer};
 use crate::license::handler::LicenseHandler;
 use crate::settings::running_app_state::RunningAppState;
-use crate::settings::AppSettings;
 use crate::tray::create_tray;
 use crate::window::open_main_window;
 use clap::Parser;
@@ -16,9 +15,8 @@ use tokio::sync::{Mutex, RwLock};
 type ShortcutErr = tauri_plugin_global_shortcut::Error;
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    setup_stronghold(app)?;
     let handle = app.handle().clone();
-    let app_state = RunningAppState::load(&handle);
+    let mut app_state = RunningAppState::load(&handle);
     let license = Mutex::new(LicenseHandler::new(app.handle().clone()));
     handle.manage(license);
 
@@ -43,7 +41,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     crate::chrome::register_host_to_chrome_apps(&handle);
-    register_global_shortcuts(&handle, app_state.settings(), action_handle).unwrap();
+    register_global_shortcuts(&handle, &mut app_state, action_handle).unwrap();
     let app_state = Arc::new(RwLock::new(app_state));
     handle.manage(app_state);
 
@@ -57,32 +55,19 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup_stronghold(app: &mut App) -> tauri::Result<()> {
-    let salt_path = app
-        .path()
-        .app_local_data_dir()
-        .expect("could not resolve app local data path")
-        .join("peppery-salt.txt");
-    app.handle()
-        .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())
-}
-
 fn register_global_shortcuts(
     handle: &AppHandle,
-    settings: &AppSettings,
+    running_app_state: &mut RunningAppState,
     sender: ActionHandle,
 ) -> Result<(), ShortcutErr> {
-    for x in settings.hotkeys() {
-        let res = register_keybind(handle, x, sender.clone());
+    let hotkeys = running_app_state.settings_mut().hotkeys().clone();
+    let failed_keybinds = running_app_state.failed_keybinds_mut();
+    for x in hotkeys {
+        let res = register_keybind(handle, &x, sender.clone());
         if let Err(why) = res {
             let id = x.id();
-            let handle = handle.clone();
             let err = why.to_string();
-            tokio::spawn(async move {
-                let state = handle.state::<Arc<RwLock<RunningAppState>>>();
-                let mut running_app_state = state.write().await;
-                running_app_state.failed_keybinds_mut().insert(id, err);
-            });
+            failed_keybinds.insert(id, err);
         }
     }
     Ok(())
