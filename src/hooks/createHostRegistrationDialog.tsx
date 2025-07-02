@@ -93,10 +93,10 @@ function WindowsDialog(props: HostRegistrationDialogProps) {
           </small>
         </footer>
         <AlertDialogFooter class={"flex"}>
-          <AlertDialogClose onClick={props.dismiss}>
+          <AlertDialogClose onClick={() => props.setOpen(false)}>
             Do it later
           </AlertDialogClose>
-          <AlertDialogAction onClick={openDownloadPage}>
+          <AlertDialogAction onClick={props.dismiss}>
             I've done this. Hide the warning
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -125,11 +125,11 @@ function MacOSDialog(props: HostRegistrationDialogProps) {
           You will miss on neat features and bug fixes if you don't update!
         </p>
         <AlertDialogFooter class={"flex"}>
-          <AlertDialogClose onClick={props.dismiss}>
-            I've done this. Hide the warning
+          <AlertDialogClose onClick={() => props.setOpen(false)}>
+            Do it later
           </AlertDialogClose>
-          <AlertDialogAction onClick={openDownloadPage}>
-            Install script
+          <AlertDialogAction onClick={props.dismiss}>
+            I've done this. Hide the warning
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -157,11 +157,11 @@ function LinuxDialog(props: HostRegistrationDialogProps) {
           You will miss on neat features and bug fixes if you don't update!
         </p>
         <AlertDialogFooter class={"flex"}>
-          <AlertDialogClose onClick={props.dismiss}>
-            I've done this. Hide the warning
+          <AlertDialogClose onClick={() => props.setOpen(false)}>
+            Do it later
           </AlertDialogClose>
-          <AlertDialogAction onClick={openDownloadPage}>
-            Install script
+          <AlertDialogAction onClick={props.dismiss}>
+            I've done this. Hide the warning
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

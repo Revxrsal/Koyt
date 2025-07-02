@@ -20,7 +20,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let license = Mutex::new(LicenseHandler::new(app.handle().clone()));
     handle.manage(license);
 
-    #[cfg(not(debug_assertions))]
+    #[cfg(not(any(debug_assertions, feature = "ms-store")))]
     {
         use tauri_plugin_autostart::ManagerExt;
         let autostart_manager = app.autolaunch();

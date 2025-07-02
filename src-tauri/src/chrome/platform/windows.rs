@@ -38,7 +38,7 @@ pub fn register_host_to_chrome_apps(app_handle: &AppHandle) -> anyhow::Result<()
         ),
         &file,
     )?;
-    #[cfg(not(debug_assertions))]
+    #[cfg(not(any(debug_assertions, feature = "ms-store")))]
     {
         install_extension(&format!(
             "Software\\Google\\Chrome\\Extensions\\{}",
