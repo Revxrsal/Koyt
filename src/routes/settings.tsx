@@ -24,6 +24,9 @@ import { appDataDir, appLocalDataDir } from "@tauri-apps/api/path";
 import { commands } from "~/gen/bindings";
 import { showErrorToast } from "~/util/toaster";
 import { usePaywall } from "~/hooks/usePaywall";
+import { unwrapResult } from "~/util/results";
+import { isMicrosoftVersion } from "~/app";
+import { createHostRegistrationDialog } from "~/hooks/createBrokenMicrosoftDialog";
 
 function RevealableFilePath(props: { path: string }) {
   async function reveal() {
@@ -34,7 +37,7 @@ function RevealableFilePath(props: { path: string }) {
   }
 
   return (
-    <span class={"underline cursor-pointer"} role={"link"} onClick={reveal}>{props.path}</span>
+    <span class={"underline cursor-pointer font-normal text-primary"} role={"link"} onClick={reveal}>{props.path}</span>
   );
 }
 
@@ -50,7 +53,9 @@ export default function Settings() {
   const [tauriVersion] = createResource(getTauriVersion);
   const [appData] = createResource(async () => (await appDataDir()).replaceAll("\\", "/"));
   const [localAppData] = createResource(async () => (await appLocalDataDir()).replaceAll("\\", "/"));
+  const [nativeChromePath] = createResource(async () => unwrapResult(await commands.getNativeChromePath()));
   const { openPaywall, isLicensed } = usePaywall();
+  const { openBrokenMicrosoftDialog } = createHostRegistrationDialog();
 
   onMount(async () => {
     if (!preferences.license) {
@@ -126,6 +131,8 @@ export default function Settings() {
           onChange={v => {
             if (isLicensed())
               setSettings("launch_on_startup", v);
+            else if (isMicrosoftVersion())
+              openBrokenMicrosoftDialog();
             else
               openPaywall();
           }}
@@ -184,12 +191,21 @@ export default function Settings() {
         <p class={"text-xl my-2"}>
           <strong>Tauri version: </strong> {tauriVersion()}
         </p>
+
+        <p class={"text-xl my-2"}>
+          <strong>Is Microsoft Edition: </strong> {isMicrosoftVersion() ? "Yes" : "No"}
+        </p>
+
         <p class={"text-xl my-2"}>
           <strong>App data directory: </strong> <RevealableFilePath path={appData() || ""} />
         </p>
 
         <p class={"text-xl my-2"}>
           <strong>Local app data directory: </strong> <RevealableFilePath path={localAppData() || ""} />
+        </p>
+
+        <p class={"text-xl my-2"}>
+          <strong>Local app data directory: </strong> <RevealableFilePath path={nativeChromePath() || ""} />
         </p>
 
       </div>

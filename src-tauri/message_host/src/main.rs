@@ -93,6 +93,7 @@ pub async fn connect() -> std::io::Result<interprocess::local_socket::tokio::Str
 }
 
 pub fn show_error(title: &str, error: &str) {
+    #[cfg(debug_assertions)]
     native_dialog::MessageDialog::new()
         .set_type(native_dialog::MessageType::Error)
         .set_title(title)

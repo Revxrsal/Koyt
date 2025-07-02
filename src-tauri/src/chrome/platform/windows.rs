@@ -6,9 +6,7 @@ use tauri::{AppHandle, Manager};
 use winreg::enums::HKEY_CURRENT_USER;
 use winreg::RegKey;
 
-use crate::chrome::platform::{
-    get_app_native_message_host, EXTENSION_ID, HOST_FILE_NAME, NATIVE_APP_ID,
-};
+use crate::chrome::platform::{get_app_native_message_host, HOST_FILE_NAME, NATIVE_APP_ID};
 
 #[cfg(target_os = "windows")]
 pub fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {

@@ -48,7 +48,10 @@ pub async fn run() {
             input_license,
             has_license,
             renew_app_license,
-            deactivate_instance
+            deactivate_instance,
+            install_registry_scripts,
+            get_native_chrome_path,
+            is_microsoft_version
         ])
         .events(collect_events![
             event::client::ClientConnectedEvent,
@@ -66,7 +69,7 @@ pub async fn run() {
 
     let app = tauri::Builder::default();
 
-    #[cfg(not(debug_assertions))]
+    #[cfg(not(any(debug_assertions, feature = "ms-store")))]
     let app = app.plugin(tauri_plugin_autostart::init(
         tauri_plugin_autostart::MacosLauncher::LaunchAgent,
         Some(vec!["--minimized"]),

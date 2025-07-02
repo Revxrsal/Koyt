@@ -9,7 +9,6 @@ pub(crate) const NATIVE_APP_ID: &'static str = "com.kbyoutube";
 
 /// The Chrome extension ID (for auto-installing the extension)
 pub(crate) const EXTENSION_ID: &'static str = "hdffofcnfjaehdacnbhccnhnomaihcok";
-// pub(crate) const EXTENSION_ID: &'static str = "phgfelfegpojplnieiojbnefdeoafgog";
 
 /// The name of the host file
 pub(crate) const HOST_FILE_NAME: &'static str = "NativeChromeHost.json";

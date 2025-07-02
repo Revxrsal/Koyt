@@ -1,0 +1,33 @@
+Windows Registry Editor Version 5.00
+
+; Google Chrome
+[HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Microsoft Edge
+[HKEY_CURRENT_USER\Software\Microsoft\Edge\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Brave
+[HKEY_CURRENT_USER\Software\BraveSoftware\Brave-Browser\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Vivaldi
+[HKEY_CURRENT_USER\Software\Vivaldi\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Opera (based on Chromium)
+[HKEY_CURRENT_USER\Software\Opera Software\Opera Stable\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Chromium (open-source)
+[HKEY_CURRENT_USER\Software\Chromium\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Yandex Browser
+[HKEY_CURRENT_USER\Software\Yandex\YandexBrowser\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"
+
+; Comodo Dragon
+[HKEY_CURRENT_USER\Software\Comodo\Dragon\NativeMessagingHosts\{{NATIVE_APP_ID}}]
+@="{{NATIVE_PATH}}"

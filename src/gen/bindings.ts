@@ -116,6 +116,25 @@ async deactivateInstance() : Promise<Result<null, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async installRegistryScripts() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("install_registry_scripts") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getNativeChromePath() : Promise<Result<string, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_native_chrome_path") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async isMicrosoftVersion() : Promise<boolean> {
+    return await TAURI_INVOKE("is_microsoft_version");
 }
 }
 

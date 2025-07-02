@@ -13,7 +13,7 @@ export interface Preferences {
 }
 
 function createDefaultPreferences(): Preferences {
-  return { license: null, theme: "system", appFont: null, dismissHostRegistrationWarning: false };
+  return { license: null, theme: "system", appFont: "Poppins", dismissHostRegistrationWarning: false };
 }
 
 function loadPreferences(): Preferences {
@@ -31,8 +31,9 @@ export function addPreferencesEffect() {
     value.setColorMode(preferences.theme);
 
     if (preferences.appFont)
-      document.getElementsByTagName("html")[0].style.fontFamily = `'${preferences.appFont}', fallback, sans-serif`;
+      document.getElementsByTagName("html")[0].style.fontFamily = `'${preferences.appFont}', sans-serif`;
     else
-      document.getElementsByTagName("html")[0].style.fontFamily = "system-ui";
+      document.getElementsByTagName("html")[0].style.fontFamily =
+        "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif";
   });
 }

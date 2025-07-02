@@ -1,5 +1,5 @@
 import { render } from "solid-js/web";
-import { createResource, createSignal, Match, Switch } from "solid-js";
+import { createResource, createSignal, Match, onMount, Switch } from "solid-js";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,6 +13,10 @@ import { latestVersion } from "~/hooks/createVersionChecker";
 import { getVersion } from "@tauri-apps/api/app";
 import { preferences, setPreferences } from "~/util/preferences";
 import { UserOS } from "~/util/os";
+import { commands } from "~/gen/bindings";
+import { showErrorToast } from "~/util/toaster";
+import { isMicrosoftVersion } from "~/app";
+import { createFailedHostResource } from "~/hooks/createFailedHostResource";
 
 interface HostRegistrationDialogProps {
   open: boolean,
@@ -22,10 +26,17 @@ interface HostRegistrationDialogProps {
 
 export function createHostRegistrationDialog() {
   const [open, setOpen] = createSignal(false);
+  const [failedToRegisterHost] = createFailedHostResource();
 
   function dismiss() {
     setPreferences("dismissHostRegistrationWarning", true);
   }
+
+  onMount(() => {
+    if (failedToRegisterHost() && isMicrosoftVersion() && !preferences.dismissHostRegistrationWarning) {
+      setOpen(true);
+    }
+  });
 
   render(() => (
     <Switch>
@@ -48,30 +59,45 @@ export function createHostRegistrationDialog() {
 }
 
 function WindowsDialog(props: HostRegistrationDialogProps) {
-  const [version] = createResource(getVersion);
+  async function openInstallation() {
+    const result = await commands.installRegistryScripts();
+    if (result.status === "error") {
+      showErrorToast("Error!", "Failed to install registry script: " + result.error);
+    }
+  }
 
   return (
     <AlertDialog open={props.open} onOpenChange={props.setOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <h3>
-            Hey friend! An update is available 🔥
+            Additional setup needed
           </h3>
         </AlertDialogHeader>
         <p>
-          <strong>Your version: </strong> {version()}
-          <br />
-          <strong>Latest version: </strong> {latestVersion()}
+          Because Microsoft restricts applications from installing browser apps, we kindly ask you to do it
+          yourself:
         </p>
-        <p>
-          You will miss on neat features and bug fixes if you don't update!
-        </p>
+        <ol class={"list-disc mx-4"}>
+          <li>
+            <span role={"link"} class={"cursor-pointer text-primary underline"} onClick={openInstallation}>
+              Save this registry script anywhere on your device
+            </span>
+          </li>
+          <li>Run it</li>
+        </ol>
+        <footer>
+          <small>
+            The application will not work if you do not do this! Only dismiss when the app actually
+            works.
+          </small>
+        </footer>
         <AlertDialogFooter class={"flex"}>
           <AlertDialogClose onClick={props.dismiss}>
-            I've done this. Hide the warning
+            Do it later
           </AlertDialogClose>
           <AlertDialogAction onClick={openDownloadPage}>
-            Install script
+            I've done this. Hide the warning
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

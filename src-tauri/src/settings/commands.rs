@@ -20,7 +20,7 @@ pub async fn set_settings<'a>(
     state: TauriRunningAppState<'a>,
 ) -> Result<(), ()> {
     let mut current = state.write().await;
-    #[cfg(not(debug_assertions))]
+    #[cfg(not(any(debug_assertions, feature = "ms-store")))]
     if current.settings().launch_on_startup() != app_settings.launch_on_startup() {
         use tauri_plugin_autostart::ManagerExt;
         let autostart_manager = current.app_handle().autolaunch();

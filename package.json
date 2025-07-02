@@ -6,7 +6,9 @@
     "build": "vinxi build",
     "start": "vinxi start",
     "tauriDev": "tauri dev",
-    "tauriBuild": "tauri build"
+    "tauriBuild": "tauri build",
+    "tauriDevMsStore": "tauri dev -f ms-store",
+    "tauriBuildMsStore": "tauri build -f ms-store"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.9",
