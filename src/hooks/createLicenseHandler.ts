@@ -17,6 +17,10 @@ export async function openDownloadPage() {
   await commands.openUrl("https://kbyoutube.com/download");
 }
 
+export async function openNativeMessaging() {
+  await commands.openUrl("https://developer.chrome.com/docs/extensions/develop/concepts/native-messaging");
+}
+
 export function createLicenseHandler() {
 
   const navigate = useNavigate();

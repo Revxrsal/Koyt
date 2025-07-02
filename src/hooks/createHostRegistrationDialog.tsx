@@ -8,7 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "~/components/ui/alert-dialog";
-import { openDownloadPage } from "~/hooks/createLicenseHandler";
+import { openNativeMessaging } from "~/hooks/createLicenseHandler";
 import { latestVersion } from "~/hooks/createVersionChecker";
 import { getVersion } from "@tauri-apps/api/app";
 import { preferences, setPreferences } from "~/util/preferences";
@@ -89,7 +89,7 @@ function WindowsDialog(props: HostRegistrationDialogProps) {
         <footer>
           <small>
             The application will not work if you do not do this! Only dismiss when the app actually
-            works.
+            works. It simply registers the app to your browser's <span class={"text-primary cursor-pointer underline"} onClick={openNativeMessaging}>native application list</span>.
           </small>
         </footer>
         <AlertDialogFooter class={"flex"}>
