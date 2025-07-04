@@ -81,7 +81,9 @@ fn get_app_native_message_host(app_handle: &AppHandle) -> NativeMessageHost {
             native_dialog::MessageDialog::new()
                 .set_type(native_dialog::MessageType::Error)
                 .set_title("Failed to copy message_host")
-                .set_text(&why.to_string())
+                .set_text(&format!(
+                    "{}. This usually occurs if you tried to install the app while the browser is running (and the extension is installed). Remove the extension or close the browser.", &why.to_string()
+                ))
                 .show_alert().unwrap();
         }
     }

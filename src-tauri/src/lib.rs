@@ -60,7 +60,7 @@ pub async fn run() {
         ])
         .error_handling(ErrorHandlingMode::Result);
 
-    // #[cfg(debug_assertions)] // <- Only export on non-release builds
+    #[cfg(debug_assertions)] // <- Only export on non-release builds
     builder
         .export(
             specta_typescript::Typescript::default().header("// @ts-ignore"),
