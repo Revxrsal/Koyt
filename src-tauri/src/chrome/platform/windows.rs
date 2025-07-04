@@ -1,6 +1,5 @@
 use std::env::current_exe;
 use std::fs::{create_dir_all, File};
-use std::io;
 use std::path::PathBuf;
 
 use crate::chrome::platform::{get_app_native_message_host, HOST_FILE_NAME, NATIVE_APP_ID};
@@ -31,7 +30,7 @@ pub fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {
                 app_exe_path: current_exe().unwrap(),
             },
         )
-        .expect(&format!("failed to write content to {}.", HOST_FILE_NAME));
+            .expect(&format!("failed to write content to {}.", HOST_FILE_NAME));
     }
     serde_json::to_writer(&mut json_file, &get_app_native_message_host(app_handle))
         .expect(&format!("failed to write content to {}.", HOST_FILE_NAME));
@@ -76,7 +75,7 @@ fn register_to_registry(path: String, file: &PathBuf) -> anyhow::Result<()> {
 }
 
 #[cfg(not(any(debug_assertions, feature = "ms-store")))]
-pub fn install_extension(registry: &str) -> io::Result<()> {
+pub fn install_extension(registry: &str) -> std::io::Result<()> {
     let key = RegKey::predef(HKEY_CURRENT_USER);
     let (key, _) = key.create_subkey(registry)?;
     key.set_value(

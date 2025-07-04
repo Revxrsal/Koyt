@@ -9,7 +9,10 @@ pub fn launch_app() {
         {
             #[cfg(feature = "ms-store")]
             {
+                use std::os::windows::process::CommandExt;
                 use std::process::Command;
+                const CREATE_NO_WINDOW: u32 = 0x08000000;
+                const DETACHED_PROCESS: u32 = 0x00000008;
                 let launch_result = Command::new("cmd")
                     .args([
                         "/C",
@@ -19,6 +22,9 @@ pub fn launch_app() {
                     ])
                     .creation_flags(DETACHED_PROCESS | CREATE_NO_WINDOW)
                     .spawn();
+                if let Err(why) = launch_result {
+                    show_error("Failed to launch app", &why.to_string());
+                }
             }
             #[cfg(not(feature = "ms-store"))]
             {
