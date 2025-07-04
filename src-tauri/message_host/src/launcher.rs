@@ -1,16 +1,39 @@
-use std::path::Path;
-
 use crate::show_error;
+use common::guide::MessageHostGuide;
 use opener::open;
+use std::fs::File;
 
 pub fn launch_app() {
     tokio::spawn(async move {
         #[cfg(target_os = "windows")]
         {
-            let app_file = Path::new("KbYouTube.exe");
-            if let Err(why) = open(&app_file) {
-                let err_str = why.to_string();
-                show_error("Failed to launch app from extension", &err_str);
+            #[cfg(feature = "ms-store")]
+            {
+                use std::process::Command;
+                let launch_result = Command::new("cmd")
+                    .args([
+                        "/C",
+                        "start",
+                        "",
+                        "shell:AppsFolder\\AliAl-Kasasbeh.Keyboard-OperatedYouTube_bqqh6z0a8n85a!KBYOUTUBE",
+                    ])
+                    .creation_flags(DETACHED_PROCESS | CREATE_NO_WINDOW)
+                    .spawn();
+            }
+            #[cfg(not(feature = "ms-store"))]
+            {
+                let guide_file = read_guide_file();
+                if let Some(guide_file) = guide_file {
+                    if let Err(why) = open(&guide_file.app_exe_path) {
+                        let err_str = why.to_string();
+                        show_error("Failed to launch app from extension", &err_str);
+                    }
+                } else {
+                    show_error(
+                        "Failed to launch app",
+                        "host_guide.json does not exist. Did you launch the app at least for once?",
+                    );
+                }
             }
         }
         #[cfg(target_os = "macos")]
@@ -32,4 +55,13 @@ pub fn launch_app() {
             }
         }
     });
+}
+
+fn read_guide_file() -> Option<MessageHostGuide> {
+    if let Ok(file) = File::open("host_guide.json") {
+        if let Ok(guide) = serde_json::from_reader(file) {
+            return Some(guide);
+        }
+    }
+    None
 }

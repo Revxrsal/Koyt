@@ -135,6 +135,9 @@ async getNativeChromePath() : Promise<Result<string, null>> {
 },
 async isMicrosoftVersion() : Promise<boolean> {
     return await TAURI_INVOKE("is_microsoft_version");
+},
+async getConnectedClients() : Promise<number> {
+    return await TAURI_INVOKE("get_connected_clients");
 }
 }
 

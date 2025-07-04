@@ -1,3 +1,4 @@
+use crate::chrome::REGISTERED_HOST;
 use crate::event::client::{ClientConnectedEvent, ClientDisconnectedEvent};
 use crate::ipc::client::Client;
 use common::ipc::ipc_address;
@@ -6,20 +7,20 @@ use interprocess::local_socket::tokio::Listener as LocalSocketListener;
 use interprocess::local_socket::traits::tokio::Listener;
 use interprocess::local_socket::ListenerOptions;
 use std::io;
-use std::sync::atomic::AtomicU32;
 use std::sync::atomic::Ordering::SeqCst;
-use std::sync::Arc;
+use std::sync::atomic::AtomicU32;
 use std::time::Duration;
 use tauri::AppHandle;
 use tauri_specta::Event;
 use tokio::sync::broadcast::{Receiver, Sender};
 use tokio::time::interval;
 
+pub static CONNECTED_CLIENTS: AtomicU32 = AtomicU32::new(0);
+
 pub struct IpcServer {
     listener: LocalSocketListener,
     sender: Sender<Message>,
     receiver: Receiver<Message>,
-    count: Arc<AtomicU32>,
 }
 
 impl IpcServer {
@@ -32,7 +33,6 @@ impl IpcServer {
                 listener,
                 sender: tx,
                 receiver: rx,
-                count: Arc::new(AtomicU32::new(0)),
             },
             Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
                 let _ = native_dialog::MessageDialog::new()
@@ -59,7 +59,7 @@ impl IpcServer {
                     .set_text(&format!("Error: could not start IPC server. Please restart the app a few times. Error:\n{:?}", &error))
                     .show_alert();
                 return Err(error.into());
-            },
+            }
         };
         Ok(server)
     }
@@ -74,9 +74,10 @@ impl IpcServer {
                 }
             };
             let _ = ClientConnectedEvent {
-                total_count: self.count().fetch_add(1, SeqCst) + 1,
+                total_count: CONNECTED_CLIENTS.fetch_add(1, SeqCst) + 1,
             }
             .emit(&app_handle);
+            REGISTERED_HOST.store(true, SeqCst);
             let keep_alive = self.sender().clone();
             tokio::spawn(async move {
                 let mut interval = interval(Duration::from_secs(5));
@@ -92,13 +93,12 @@ impl IpcServer {
 
             let client = Client::new(conn, rx);
             let app_handle = app_handle.clone();
-            let count = Arc::clone(&self.count);
             tokio::spawn(async move {
                 if let Err(e) = client.handle().await {
                     eprintln!("error while handling connection: {e}");
                 } else {
                     let _ = ClientDisconnectedEvent {
-                        total_count: count.fetch_sub(1, SeqCst) - 1,
+                        total_count: CONNECTED_CLIENTS.fetch_sub(1, SeqCst) - 1,
                     }
                     .emit(&app_handle);
                 }
@@ -110,10 +110,6 @@ impl IpcServer {
         ActionHandle {
             sender: self.sender.clone(),
         }
-    }
-
-    pub fn count(&self) -> &AtomicU32 {
-        &self.count
     }
 
     pub fn receiver(&self) -> &Receiver<Message> {

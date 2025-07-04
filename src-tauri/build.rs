@@ -10,12 +10,20 @@ fn main() {
     let target_triple = env::var("TARGET").unwrap();
 
     // Build the 'message_host' crate
-    let status = Command::new("cargo")
-        .current_dir(&message_host)
-        .args(&["build", "--release"])
-        .status()
-        .expect("Failed to build message_host crate");
-
+    let status = if cfg!(feature = "ms-store") {
+        Command::new("cargo")
+            .current_dir(&message_host)
+            .args(&["build", "--release", "--features", "ms-store"])
+            .status()
+            .expect("Failed to build message_host crate")
+    } else {
+        Command::new("cargo")
+            .current_dir(&message_host)
+            .args(&["build", "--release"])
+            .status()
+            .expect("Failed to build message_host crate")
+    };
+    
     if !status.success() {
         panic!("Building message_host failed");
     }

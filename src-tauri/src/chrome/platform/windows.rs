@@ -1,12 +1,13 @@
+use std::env::current_exe;
 use std::fs::{create_dir_all, File};
 use std::io;
 use std::path::PathBuf;
 
+use crate::chrome::platform::{get_app_native_message_host, HOST_FILE_NAME, NATIVE_APP_ID};
+use common::guide::MessageHostGuide;
 use tauri::{AppHandle, Manager};
 use winreg::enums::HKEY_CURRENT_USER;
 use winreg::RegKey;
-
-use crate::chrome::platform::{get_app_native_message_host, HOST_FILE_NAME, NATIVE_APP_ID};
 
 #[cfg(target_os = "windows")]
 pub fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {
@@ -16,6 +17,22 @@ pub fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {
     let path = parent.join(HOST_FILE_NAME);
     let mut json_file =
         File::create(&path).expect("failed to create a Chrome native message host file");
+    if !cfg!(feature = "ms-store") {
+        let guide_file = app_handle
+            .path()
+            .app_local_data_dir()
+            .unwrap()
+            .join("host_guide.json");
+        let mut guide_file = File::create(&guide_file)
+            .expect("failed to create a Chrome native message host GUIDE file");
+        serde_json::to_writer(
+            &mut guide_file,
+            &MessageHostGuide {
+                app_exe_path: current_exe().unwrap(),
+            },
+        )
+        .expect(&format!("failed to write content to {}.", HOST_FILE_NAME));
+    }
     serde_json::to_writer(&mut json_file, &get_app_native_message_host(app_handle))
         .expect(&format!("failed to write content to {}.", HOST_FILE_NAME));
     path

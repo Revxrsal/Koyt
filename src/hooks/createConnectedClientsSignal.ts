@@ -1,9 +1,11 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import { events } from "~/gen/bindings";
+import { commands, events } from "~/gen/bindings";
 
 export function createConnectedClientsSignal() {
   const [value, setValue] = createSignal(0);
   onMount(async () => {
+    const connected = await commands.getConnectedClients();
+    setValue(connected);
     const u1 = await events.clientConnectedEvent.listen(({ payload }) => {
       setValue(payload.total_count);
     });

@@ -51,7 +51,8 @@ pub async fn run() {
             deactivate_instance,
             install_registry_scripts,
             get_native_chrome_path,
-            is_microsoft_version
+            is_microsoft_version,
+            get_connected_clients
         ])
         .events(collect_events![
             event::client::ClientConnectedEvent,
@@ -59,7 +60,7 @@ pub async fn run() {
         ])
         .error_handling(ErrorHandlingMode::Result);
 
-    #[cfg(debug_assertions)] // <- Only export on non-release builds
+    // #[cfg(debug_assertions)] // <- Only export on non-release builds
     builder
         .export(
             specta_typescript::Typescript::default().header("// @ts-ignore"),

@@ -22,9 +22,10 @@ fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {
 }
 
 #[cfg(target_os = "macos")]
-pub fn register_host_to_chrome_apps(app_handle: &AppHandle) {
+pub fn register_host_to_chrome_apps(app_handle: &AppHandle) -> anyhow::Result<()> {
     get_chrome_json(app_handle);
-    install_extension(EXTENSION_ID).unwrap();
+    install_extension(EXTENSION_ID)?;
+    Ok(())
 }
 
 #[cfg(target_os = "macos")]

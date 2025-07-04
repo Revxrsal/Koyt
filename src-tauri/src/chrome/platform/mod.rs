@@ -68,14 +68,22 @@ fn files_are_equal(path1: &PathBuf, path2: &PathBuf) -> std::io::Result<bool> {
 }
 
 fn get_app_native_message_host(app_handle: &AppHandle) -> NativeMessageHost {
-    let src_path = get_message_host_file().expect("message host file not found in installation dir");
+    let src_path =
+        get_message_host_file().expect("message host file not found in installation dir");
     let dest_path = app_handle.path().app_local_data_dir().unwrap();
     #[cfg(target_os = "windows")]
     let dest_path = dest_path.join(format!("{}.exe", HOST_EXECUTABLE));
     #[cfg(not(target_os = "windows"))]
     let dest_path = dest_path.join(HOST_EXECUTABLE);
     if !dest_path.exists() || !files_are_equal(&src_path, &dest_path).unwrap() {
-        fs::copy(&src_path, &dest_path).unwrap();
+        let res = fs::copy(&src_path, &dest_path);
+        if let Err(why) = res {
+            native_dialog::MessageDialog::new()
+                .set_type(native_dialog::MessageType::Error)
+                .set_title("Failed to copy message_host")
+                .set_text(&why.to_string())
+                .show_alert().unwrap();
+        }
     }
     NativeMessageHost {
         name: String::from(NATIVE_APP_ID),

@@ -7,6 +7,7 @@ use specta::specta;
 use std::sync::atomic::Ordering;
 use tauri::{command, AppHandle};
 use tauri_plugin_dialog::DialogExt;
+use crate::ipc::listener::CONNECTED_CLIENTS;
 
 #[command]
 #[specta]
@@ -89,4 +90,10 @@ pub async fn install_registry_scripts<'a>(
 #[specta]
 pub fn is_microsoft_version() -> bool {
     return cfg!(target_os = "windows") && cfg!(feature = "ms-store");
+}
+
+#[command]
+#[specta]
+pub fn get_connected_clients() -> u32 {
+    return CONNECTED_CLIENTS.load(Ordering::SeqCst);
 }
