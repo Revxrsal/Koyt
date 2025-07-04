@@ -24,7 +24,6 @@ import { appDataDir, appLocalDataDir } from "@tauri-apps/api/path";
 import { commands } from "~/gen/bindings";
 import { showErrorToast } from "~/util/toaster";
 import { usePaywall } from "~/hooks/usePaywall";
-import { unwrapResult } from "~/util/results";
 import { isMicrosoftVersion } from "~/app";
 import { createHostRegistrationDialog } from "~/hooks/createBrokenMicrosoftDialog";
 
@@ -53,7 +52,6 @@ export default function Settings() {
   const [tauriVersion] = createResource(getTauriVersion);
   const [appData] = createResource(async () => (await appDataDir()).replaceAll("\\", "/"));
   const [localAppData] = createResource(async () => (await appLocalDataDir()).replaceAll("\\", "/"));
-  const [nativeChromePath] = createResource(async () => unwrapResult(await commands.getNativeChromePath()));
   const { openPaywall, isLicensed } = usePaywall();
   const { openBrokenMicrosoftDialog } = createHostRegistrationDialog();
 
@@ -202,10 +200,6 @@ export default function Settings() {
 
         <p class={"text-xl my-2"}>
           <strong>Local app data directory: </strong> <RevealableFilePath path={localAppData() || ""} />
-        </p>
-
-        <p class={"text-xl my-2"}>
-          <strong>Local app data directory: </strong> <RevealableFilePath path={nativeChromePath() || ""} />
         </p>
 
       </div>

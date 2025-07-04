@@ -1,4 +1,3 @@
-use crate::chrome::platform::windows::get_chrome_json;
 use crate::chrome::platform::NATIVE_APP_ID;
 use crate::chrome::REGISTERED_HOST;
 use crate::TauriRunningAppState;
@@ -43,13 +42,6 @@ pub async fn get_latest_version() -> Result<String, String> {
 #[specta]
 pub async fn failed_to_register_hosts() -> Result<bool, ()> {
     return Ok(REGISTERED_HOST.load(Ordering::SeqCst));
-}
-
-#[command]
-#[specta]
-pub async fn get_native_chrome_path(app_handle: AppHandle) -> Result<String, ()> {
-    let path = get_chrome_json(&app_handle);
-    return Ok(path.to_str().unwrap().to_string().replace('\\', "/"));
 }
 
 #[command]

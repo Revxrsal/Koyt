@@ -50,7 +50,6 @@ pub async fn run() {
             renew_app_license,
             deactivate_instance,
             install_registry_scripts,
-            get_native_chrome_path,
             is_microsoft_version,
             get_connected_clients
         ])
