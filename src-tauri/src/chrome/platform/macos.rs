@@ -16,7 +16,7 @@ fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {
     create_dir_all(&parent).expect("failed to create Google/Chrome/NativeMessagingHosts/ directory");
     let path = parent.join(format!("{}.json", NATIVE_APP_ID));
     let mut json_file = File::create(&path).expect("failed to create a Chrome native message host file");
-    serde_json::to_writer(&mut json_file, &get_app_native_message_host())
+    serde_json::to_writer(&mut json_file, &get_app_native_message_host(app_handle))
         .expect(&format!("failed to write content to {}.json", NATIVE_APP_ID));
     return path;
 }

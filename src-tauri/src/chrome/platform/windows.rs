@@ -16,7 +16,7 @@ pub fn get_chrome_json(app_handle: &AppHandle) -> PathBuf {
     let path = parent.join(HOST_FILE_NAME);
     let mut json_file =
         File::create(&path).expect("failed to create a Chrome native message host file");
-    serde_json::to_writer(&mut json_file, &get_app_native_message_host())
+    serde_json::to_writer(&mut json_file, &get_app_native_message_host(app_handle))
         .expect(&format!("failed to write content to {}.", HOST_FILE_NAME));
     path
 }
@@ -42,11 +42,11 @@ pub fn register_host_to_chrome_apps(app_handle: &AppHandle) -> anyhow::Result<()
     {
         install_extension(&format!(
             "Software\\Google\\Chrome\\Extensions\\{}",
-            EXTENSION_ID
+            crate::chrome::platform::EXTENSION_ID
         ))?;
         install_extension(&format!(
             "Software\\Microsoft\\Edge\\Extensions\\{}",
-            EXTENSION_ID
+            crate::chrome::platform::EXTENSION_ID
         ))?;
     }
     Ok(())
@@ -58,6 +58,7 @@ fn register_to_registry(path: String, file: &PathBuf) -> anyhow::Result<()> {
     Ok(())
 }
 
+#[cfg(not(any(debug_assertions, feature = "ms-store")))]
 pub fn install_extension(registry: &str) -> io::Result<()> {
     let key = RegKey::predef(HKEY_CURRENT_USER);
     let (key, _) = key.create_subkey(registry)?;
