@@ -7,8 +7,8 @@ use interprocess::local_socket::tokio::Listener as LocalSocketListener;
 use interprocess::local_socket::traits::tokio::Listener;
 use interprocess::local_socket::ListenerOptions;
 use std::io;
-use std::sync::atomic::Ordering::SeqCst;
 use std::sync::atomic::AtomicU32;
+use std::sync::atomic::Ordering::SeqCst;
 use std::time::Duration;
 use tauri::AppHandle;
 use tauri_specta::Event;
@@ -35,20 +35,17 @@ impl IpcServer {
                 receiver: rx,
             },
             Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
+                #[cfg(any(target_os = "macos", target_os = "linux"))]
+                {
+                    std::fs::remove_file(ipc_fs_path())?;
+                    return Self::create();
+                }
+                // either has crashed or simply hasn't exited yet.
                 let _ = native_dialog::MessageDialog::new()
                     .set_type(native_dialog::MessageType::Error)
                     .set_title("Failed to start IPC server")
                     .set_text(&"Error: could not start server because the socket file is occupied. The app might have crashed and was unable to clean leftovers. Please restart the app a few times".to_string())
                     .show_alert();
-                // When a program that uses a file-type socket name terminates its socket server
-                // without deleting the file, a "corpse socket" remains, which can neither be
-                // connected to nor reused by a new listener. Normally, Interprocess takes care of
-                // this on affected platforms by deleting the socket file when the listener is
-                // dropped. (This is vulnerable to all sorts of races and thus can be disabled.)
-                //
-                // There are multiple ways this error can be handled, if it occurs, but when the
-                // listener only comes from Interprocess, it can be assumed that its previous instance
-                // either has crashed or simply hasn't exited yet.
                 return Err(e.into());
             }
             e => {

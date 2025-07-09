@@ -11,3 +11,7 @@ pub fn ipc_address<'s>() -> anyhow::Result<Name<'s>> {
     };
     Ok(print_name)
 }
+
+pub fn ipc_fs_path() -> String {
+    String::from("/tmp/kbyoutube.sock")
+}
