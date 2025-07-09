@@ -36,8 +36,7 @@ impl IpcServer {
             },
             Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
                 #[cfg(any(target_os = "macos", target_os = "linux"))]
-                {
-                    std::fs::remove_file(ipc_fs_path())?;
+                if let Ok(()) = std::fs::remove_file(ipc_fs_path()) {
                     return Self::create();
                 }
                 // either has crashed or simply hasn't exited yet.
