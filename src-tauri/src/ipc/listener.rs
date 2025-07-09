@@ -1,7 +1,7 @@
 use crate::chrome::REGISTERED_HOST;
 use crate::event::client::{ClientConnectedEvent, ClientDisconnectedEvent};
 use crate::ipc::client::Client;
-use common::ipc::ipc_address;
+use common::ipc::{ipc_address, ipc_fs_path};
 use common::message::Message;
 use interprocess::local_socket::tokio::Listener as LocalSocketListener;
 use interprocess::local_socket::traits::tokio::Listener;
