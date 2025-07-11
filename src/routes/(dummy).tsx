@@ -2,7 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { createResource, onMount } from "solid-js";
 import Main from "~/components/layout/Main";
 import { commands } from "~/gen/bindings";
-import { preferences } from "~/util/preferences";
+import { preferences, setPreferences } from "~/util/preferences";
 import { showErrorToast } from "~/util/toaster";
 import { Puff } from "solid-spinner";
 
@@ -22,7 +22,8 @@ export default function Index() {
   const navigate = useNavigate();
   onMount(async () => {
     if (!preferences.license) {
-      navigate("/inputLicense");
+      setPreferences("license", "free");
+      navigate("/home");
       return;
     } else if (preferences.license === "free") {
       navigate("/home");
